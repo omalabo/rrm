@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+<h2>Localite Form</h2>
+
+<form method="POST" id="locationform" data-location-url="{% url ajax_load_localite %}"  >
+        {% csrf_token %}
+        {{form.as_p}}
+       
+        <input type="submit" value="submit">
+</form>
+
+<script>
+    $("#region_id").change(function()
+    {
+        const url = $("#locationform").attr("data-location-url"); // get the url of load_location
+        const regionid = $(this).val(); // get the selected country ID from the HTML input
+
+        $.ajax({
+            url: url,  // get the selected region ID from the HTML input
+            data: {
+                'region_id':regionid   // add the region id to the GET parameters                
+            },
+            success: function(data){// `data` is the return of the `load_cities` view function
+                $("#departement_id").html(data)
+
+
+            }
+
+        })
+
+    })
+</script>
+
+

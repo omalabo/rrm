@@ -1,0 +1,43 @@
+<!-- templates/acteur_list.html-->
+
+{% extends "base.html" %}
+
+
+{% block title %} Liste des acteurs {% endblock title %}
+
+
+
+{% block content %}
+<p>
+        <tr>
+                <td style="width:100px">
+                    Nom de l'acteur
+                </td>
+                <td style="width:100px">Catégorie de l'acteur</td>
+                <td style="width:100px">Adresse</td>
+            </tr>
+</p>
+    {% for acteur in object_list  %}
+        <div class="card">
+           <tr>
+                <div class="card-header">
+                        <td style="width:100px">
+                                <span class="font-weight-bold"> {{acteur.name}} </span>
+                        </td>
+                       <td style="width:100px">
+                            <span class="text-muted" color="red"> {{acteur.category}}</span>
+                       </td>
+                       <td style="width:100px">
+                            <span class="italic">{{acteur.adress}}</span>
+                       </td>
+                    </div>
+           </tr>
+      
+        </div>
+        
+    
+    {% endfor %}
+    
+{% endblock content %}
+    
+    

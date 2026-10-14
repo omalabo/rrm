@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+
+
+{% block title %}
+
+{% endblock title %}
+
+
+{% block content %}
+<center>
+        <div><h1>Ajout d'une localité</h1></div>
+        <hr item-width="10px">
+    <form method="POST" id="depform" data-dept ="{% url 'load_dep' %}" data-commune = "{% url 'load_commune' %}">
+            {% csrf_token %}
+            {{form.as_p}}
+            <input type="submit" value="Submit">
+    </form>        
+
+</center>
+
+    <script>
+        $(document).ready(function () {  
+        
+            $("#id_region").change(function(){
+
+                const region_id =$(this).val();
+                const url =$("#depform").attr("data-dept");
+
+                  $.ajax({
+                url: url,
+                data: {
+                    'region_id': region_id
+                },
+
+                success: function(data){
+                    $("#id_departement").html(data);
+
+                    }
+                });
+                
+
+            });
+
+            $("#id_departement").change(function (){
+
+                const dept_id =$(this).val();
+                const url = $("#depform").attr("data-commune");
+
+                $.ajax({
+                    url : url,
+                    data: {
+                        'dept_id' :dept_id
+                    },
+                    success: function(data){
+                        $("#id_commune").html(data);
+                    }
+                    
+                });
+
+
+
+            });
+
+          
+
+        });
+    </script>
+{% endblock content %}
+    
+    

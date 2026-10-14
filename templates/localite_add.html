@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+
+
+
+{% block content %}
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+<script>
+        $(document).ready(function(){
+
+            $("#id_region").change(function(){
+              
+            const region_id = $(this).val();
+            const url = $("#localiteForm").attr("departement-url");
+           // alert(url);
+
+                   $.ajax({
+                        url: url ,
+                        type: "POST",
+                        
+                        data: {
+                            'region_id': region_id
+                             },
+                    success: function(data) {  // Data is from the view
+                       // alert("foo")
+                        $("#id_departement").html(data);
+                        alert("ohhh");
+
+                        
+                    }
+            });
+            
+
+});
+
+    
+
+        })
+     
+                    
+
+             
+
+
+             
+       
+        
+        
+    </script>
+    
+<form method="POST" id="localiteForm" departement-url = '{% url "get_departement" %}'>
+    {% csrf_token %}
+    {{form.as_p}}
+
+    <input type="submit" value="Submit">
+</form>
+{% endblock content %}
+    

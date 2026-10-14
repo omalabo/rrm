@@ -1,0 +1,17 @@
+<!-- templates/new_acteur.html-->
+
+{% extends "base.html" %}
+
+
+{% block content %}
+<h1><span style="color: navy">Enregistrer un nouveau acteur</span> </h1>
+<form action="" method="POST">{% csrf_token %}
+        {{form.as_p}}
+    
+        <button type="submit">Enregistrer</button>
+    
+    
+</form>
+    
+{% endblock content %}
+    

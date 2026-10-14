@@ -1,0 +1,8 @@
+<!-- locationdropdownlist.html-->
+
+<option value="">----choisir---------</option>
+{% for departement in  departements %}
+<option value="{{departement.id}}"{{departement.get_name_display></option>
+      
+{% endfor %}
+

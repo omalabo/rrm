@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+<h1> Enregistrer une localite</h1>
+{{ form.media.js }}
+<form method="POST"></form>
+{% csrf_token %}
+
+{{form.as_p}}
+
+<input type="submit">
+
+    
+{% endblock content %}
+
+
+    
