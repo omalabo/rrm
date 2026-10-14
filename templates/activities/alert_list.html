@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+
+
+{% block content %}
+
+{% load django_tables2 %} 
+<div class="jumbotron text-center">
+    <h1>Gestion des alertes</h2>
+    <h3> Toutes les alertes actives sont présentées dans le tableau ci-dessous. 
+        Cliquer sur une ligne pour sélectionner une alerte</h3>
+</div>
+
+<div class="container">
+    <div class="row">
+        {% render_table table %}
+    </div>
+    <div class="col-sm-4">
+        <h3>Confirmation</h3>
+        <p id="confirm_form"></p>
+      </div>
+      <div class="col-sm-4">
+        <h3>Evaluations</h3>
+        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit...</p>
+        <p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris...</p>
+      </div>
+      <div class="col-sm-4">
+        <h3>Interventions</h3>        
+        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit...</p>
+        <p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris...</p>
+      </div>
+</div>
+
+
+
+ 
+<script>
+    $(document).ready(function() {
+    $('#mytable').DataTable();
+    //
+
+    // Add a click event to our table
+    var table = $('#mytable').DataTable();
+    $('#mytable tbody').on('click', 'tr', function () {
+        var data = table.row( this ).data();
+       // alert( 'You clicked on '+data[0]+'\'s row' );
+        confirm("Voulez vous confirmer cette alerte ?")
+        $("#confirm_form").append("Hi "+data[10])
+    } );
+} );
+</script>
+
+{% endblock content %}
+    
