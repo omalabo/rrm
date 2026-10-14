@@ -1,0 +1,591 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+
+
+ {% load static %}
+<style>
+        .material-icons {
+        font-family: 'Material Icons';
+        font-weight: normal;
+        font-style: normal;
+        font-size: 24px;  /* Preferred icon size */
+        display: inline-block;
+        line-height: 1;
+        text-transform: none;
+        letter-spacing: normal;
+        word-wrap: normal;
+        white-space: nowrap;
+        direction: ltr;
+
+        /* Support for all WebKit browsers. */
+        -webkit-font-smoothing: antialiased;
+        /* Support for Safari and Chrome. */
+        text-rendering: optimizeLegibility;
+
+        /* Support for Firefox. */
+        -moz-osx-font-smoothing: grayscale;
+
+        /* Support for IE. */
+        font-feature-settings: 'liga';
+        }
+</style>
+ 
+
+
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+     <link rel="stylesheet" href="{% static 'css/alerte_detail.css' %}">
+
+
+     
+
+                        <div class="container " style="margin-bottom: 20px;">
+                                <br>
+                        <!-- Autoriser la modification uniquement lorsque l'élement n'est pas validé-->
+                        {% if alerte.validation == 1 and user.last_name|lower == alerte.acteur|lower and "Contributeur" in user_groups %}
+                        <a class="btn btn-success" href="{% url 'alerte_update' alerte.id %}">Modier l'alerte</a>
+                        {% endif %}
+                        {% comment %} <a class="btn btn-secondary" href=" {% url 'home' %}">Accueil</a> {% endcomment %}
+                        {% if "Contributeur" in user_groups %}
+                        <!--oumarou labo ajout de if-->
+                        {% if not alerte.cloture_status %}
+                        <!--oumarou labo ajout de if-->
+                        <a class="btn btn-primary" href=" {% url 'mouvement_new' alerte.id %}" >Ajouter des détails du mouvement</a>
+                        <a class="btn btn-primary" href=" {% url 'eval-init' alerte.id %}">Ajouter une évaluation</a>
+                        <a class="btn btn-primary" href=" {% url 'eval-init-sante' alerte.id %}">Ajouter une évaluation santé & nutrition</a>
+                        <a class="btn btn-primary" href=" {% url 'positionnement_new' alerte.id %}">Enregistrer un positionnement</a>
+                        
+                        <!-- Ajouter les interventions-->
+                        <div class="btn-group">
+                                <div class="dropdown">
+                                        <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+                                        Enregistrer une intervention
+                                        </button>
+                                        <div class="dropdown-menu">
+                                                <a class="dropdown-item" href=" {% url 'new_abri' alerte.id %}" >Abri</a>
+                                                <a class="dropdown-item" href=" {% url 'new_nfi' alerte.id %}" >NFI</a>
+                                                <a class="dropdown-item" href=" {% url 'new_protection' alerte.id %}" >Protection</a>
+                                                <a class="dropdown-item" href=" {% url 'new_secal' alerte.id %}" >SECAL</a>
+                                                <a class="dropdown-item" href=" {% url 'new_wash' alerte.id %}" >WASH</a>
+                                                <a class="dropdown-item" href=" {% url 'intervention_rapide_init_sante' alerte.id %}" >Santé & Nutrition</a>                                                
+                                        </div>
+                                </div>
+                        </div>
+                        <br> </br>
+                        <a class="btn btn-primary" href=" {% url 'new_rapport' alerte.id %}">Télécharger un rapport</a>
+                        <a class="btn btn-primary" href=" {% url 'new_pim' alerte.id %}">Enregistrer une PIM</a>
+                        <a class="btn btn-danger" href="#" onclick="confirmerEnvoiAlerte('{{alerte.id}}')"> Envoyer l'alerte (email) </a>
+                        
+                        <!--oumarou labo-->
+                        <a class="btn btn-primary" href="#"  onclick="confirmerCloturer('{{alerte.id}}')" > Cloturer l'alerte </a>
+                        <!--oumarou labo-->
+
+                        <!--oumarou labo ajout de else-->
+                        {% else %}
+
+                        <div class="alert alert-info" role="alert">
+                                <span class="material-icons">
+                                        </span>
+                                Alerte cloturée, pour traitrer à nouveau l'alerte veuillez cliquer sur le bouton suivant 
+                                <a class="btn btn-primary" href="#"  onclick="confirmerNonCloturer('{{alerte.id}}')" > Annuler cloture </a>
+                        </div>
+
+                        {% endif %}
+                        <!--oumarou labo ajout de if-->
+
+                        {% endif %}
+        <!--Oumarou labo ajout de style="padding-bottom: 20px"-->
+        <div class="row" style="margin-right: 30px; padding-bottom: 20px;">
+                <div class="col-xs-12 col-md-4"> 
+                        <div class="card">
+                                <h3 class="text-center">Informations générales </h3>
+                                <!--Oumarou labo ajout de style="margin-right: 30px; margin-bottom: 20px;"-->
+                                <ul class="list-group-striped" style="margin-right: 30px; margin-bottom: 20px;">
+                                        <li class="list-group-item">
+                                                <p><strong>Region: </strong>{{alerte.localite.commune.departement.region}}</p>
+                                        </li>
+                                        <li class="list-group-item">
+                                                <p><strong>Département: </strong>{{alerte.localite.commune.departement}}</p>
+                                        </li>
+                                        <li class="list-group-item">
+                                                <p><strong>Commune: </strong>{{alerte.localite.commune}}</p>
+                                        </li>
+                                        <li class="list-group-item">
+                                                <p><strong>Localite: </strong>{{alerte.localite}}</p>
+                                        </li>
+                                        <li class="list-group-item">
+                                                <p><strong>Acteur: </strong>{{alerte.acteur}}</p>
+                                        </li>
+                                        <li class="list-group-item">
+                                                <p><strong>Source: </strong>{{alerte.get_source_display}}</p>
+                                        </li>
+                                        <li class="list-group-item">
+                                                <p><strong>Date de reception: </strong>{{alerte.date_reception}}</p>
+                                        </li>
+                                        <li class="list-group-item">
+                                                <p><strong>Nombre de ménage affectés: </strong>{{alerte.menages_affectes}}</p>
+                                        </li>
+                                        <li class="list-group-item">
+                                                <p><strong>Statut de confirmation: </strong>{{alerte.confirmation_status}}</p>
+                                        </li>
+                                        {% if alerte.confirmation_status %}
+                                <li class="list-group-item"><p><strong>Date de confirmation: </strong>{{alerte.date_confirmation}}</p>   </li> 
+                                        {% endif %}        
+                                </ul>
+
+                        </div>
+                        
+                </div>
+        
+                <div class="col-xs-12 col-md-4">
+                        <div  class="card" >
+                                <h3 class="text-center">Détails des mouvements</h3>
+                                <!--Oumarou labo ajout de style="margin-right: 25px; margin-bottom: 20px;"-->
+                                <ul class="list-group-striped" style="margin-right: 30px; margin-bottom: 20px;">
+                                        {% for mouvement in alerte.mouvement_set.all %}
+                                        <!-- <a href= "{% url 'mouvement_new' mouvement.id %}"  class="list-group-item-primary list-group-item list-group-item-action flex-column align-items-start"> -->
+
+                                                <li class="list-group-item"><strong>Statut des déplacés:</strong> {{ mouvement.get_statut_deplace_display}}</li>
+                                                <li class="list-group-item"><strong> Origine: </strong>
+                                                {% if mouvement.localite%}
+                                                         {{mouvement.localite}}
+                                                {% else %}
+                                                        {{mouvement.get_pays_origine_display}}
+                                                {% endif %}
+
+                                                </li>
+                                                <li class="list-group-item"><strong>Nombre de ménages: </strong>{{mouvement.menage_affectes}} </li>
+                                                <li class="list-group-item"><strong>Date: </strong>{{mouvement.date_reception}} </li>
+                                                <hr />
+                                        {% endfor %}
+                                </ul>
+                        </div>
+                        <hr/>
+                        <div class="card">
+                                <h3 class="text-center">Positionnement des acteurs</h3>
+                                       <ul class="list-group-striped" style="margin-right: 30px; margin-bottom: 20px;">
+                                        {% for positionnement in alerte.positionnement_set.all %}
+                                        <a href= "{% url 'positionnement_detail' positionnement.id %}"  class="list-group-item-primary list-group-item list-group-item-action flex-column align-items-start">
+                                                <li class="list-group-item"><strong>Acteur:</strong> {{ positionnement.acteur}}</li>
+                                                <li class="list-group-item"><strong> Nombre de kits NFI: </strong> {{positionnement.nombre_kit_nfi}}</li>
+                                                <li class="list-group-item"><strong> Nombre de kits Abri: </strong> {{positionnement.nombre_kit_abri}}</li>                                            
+                                                <hr />
+                                        {% endfor %}
+                                         </a>
+                                </ul> 
+                        </div>
+
+                        <hr/>
+                        <div class="card">
+                                <h3 class="text-center">Analyse des gaps</h3>
+                                <!--Oumarou labo ajout de style="margin-right: 30px; margin-bottom: 20px;"-->
+                                       <ul class="list-group-striped" style="margin-right: 30px; margin-bottom: 20px;">
+                                        {% for positionnement in alerte.positionnement_set.all %}
+                                        <a href= "{% url 'positionnement_detail' positionnement.id %}"  class="list-group-item-primary list-group-item list-group-item-action flex-column align-items-start">
+                                                <!-- <li class="list-group-item"><strong>Acteur:</strong> {{ sum_of_values}}</li>
+                                                <li class="list-group-item"><strong> Nombre de kits NFI: </strong> {{alerte.menages_affectes}}</li>
+                                                <li class="list-group-item"><strong> Nombre de kits Abri: </strong> {{positionnement.nombre_kit_abri}}<li>                                             -->
+                                                <hr />
+                                        {% endfor %}
+                                         </a>
+                                </ul> 
+                        </div>
+                </div>
+
+                <div class="col-xs-12 col-md-4">                
+                        <div class="card">
+                                <h3 class="text-center">Activités réalisées </h3>
+                                <!--Oumarou labo ajout de style="margin-right: 30px;"-->
+                                <ul class="list-group-striped" style="margin-right: 30px;">
+                                <!-- Liste des évaluations-->
+                                {% if alerte.evaluation_set.all or alerte.evaluationsante_set.all%}
+                                        {% comment %} <li class="list-group-item"><h4></h4></li> {% endcomment %}
+                                        <div class="card-content">
+                                        <h4 class="card-title">Evaluations effectuées</h4>
+                                                
+                                                        {% for evaluation in alerte.evaluation_set.all %}
+                                                        <div class="list-group">
+                                                                        <a href= "{% url 'evaluation_detail' evaluation.id %}"  class="list-group-item-primary list-group-item list-group-item-action flex-column align-items-start">
+                                                                                       <div class="d-flex w-100 justify-content-between">
+                                                                                                       <h5 class="mb-1">{{evaluation.acteur}}: {{evaluation.get_type_eval_display}}- {{evaluation.alerte.localite}}</h5>
+                                                                                                       <small>{{evaluation.date_debut}}</small>
+                                                                                       </div>
+                                                                               <p> <strong>Date début: </strong>{{ evaluation.date_debut}}</p>
+                                                                                       <p><strong>Date fin: </strong>{{ evaluation.date_fin}}</p>                                                      
+                                                                       </a>
+                                                                </div>
+                                                               
+                                                        <!-- <li class="list-group-item"> <strong>Date d'évaluation: </strong>{{ evaluation.date_debut}}</li>
+                                                                <li class="list-group-item"><strong>Type d'évaluation: </strong>{{ evaluation.get_type_eval_display}}</li
+                                                                <hr /> -->
+                                                        {% endfor %}
+
+                                                        {% for evaluation in alerte.evaluationsante_set.all %}
+                                                        <div class="list-group">
+                                                        <a href= "{% url 'evaluation_sante_detail' evaluation.id %}"  class="list-group-item-primary list-group-item list-group-item-action flex-column align-items-start">
+                                                                        <div class="d-flex w-100 justify-content-between">
+                                                                                        <h5 class="mb-1">{{evaluation.acteur}}: Eval santé & nutrition {{evaluation.get_type_eval_display}}- {{evaluation.alerte.localite}}</h5>
+                                                                                        <small>{{evaluation.date_debut}}</small>
+                                                                        </div>
+                                                                <p> <strong>Date de l'enquête: </strong>{{ evaluation.date_enquete}}</p>                                                  
+                                                        </a>
+                                                        </div>
+                                                               
+                                                        <!-- <li class="list-group-item"> <strong>Date d'évaluation: </strong>{{ evaluation.date_debut}}</li>
+                                                                <li class="list-group-item"><strong>Type d'évaluation: </strong>{{ evaluation.get_type_eval_display}}</li
+                                                                <hr /> -->
+                                                        {% endfor %}
+                                        </div>        
+                                        </div>        
+                               
+                                {% endif %}  
+                        
+                                <!-- Liste des interventions-->
+                                {% if alerte.interventionnfi_set.all or alerte.interventionabri_set.all or alerte.interventionwash_set.all or alerte.interventionprotection_set.all or alerte.interventionsecal_set.all or alerte.interventionrapidesante_set.all%}
+                                {% comment %} <li class="list-group-item"><h4></h4></li> {% endcomment %}
+                                <div class="card-content">
+                                <h4 class="card-title" style="text-align: center;">Interventions effectuées</h4>
+                                <!-- Liste des interventions NFI-->  
+                                {% if alerte.interventionnfi_set.all%}
+                                                            
+                                        {% for intervention in alerte.interventionnfi_set.all %}
+                                        <div class="list-group">
+                                                        <a href= "{% url 'internfi_detail' intervention.id %}"  class="list-group-item-success list-group-item list-group-item-action flex-column align-items-start">
+                                                                       <div class="d-flex w-100 justify-content-between">
+                                                                                       <h5 class="mb-1">NFI: {{intervention.acteur}}- {{intervention.alerte.localite}}</h5>
+                                                                                       <small>{{intervention.date_debut}}</small>
+                                                                       </div>
+                                                               <p> <strong>Date début: </strong>{{ intervention.date_debut}}</p>
+                                                                       <p><strong>Date fin: </strong>{{ intervention.date_fin}}</p>                                                      
+                                                       </a>
+                                                </div>
+                                               
+                                        {% endfor %}
+                                
+                                {% endif %}
+                                <!-- Liste des interventions abri-->  
+                                {% if alerte.interventionabri_set.all%}
+                                        {% for intervention in alerte.interventionabri_set.all %}
+                                        <div class="list-group">
+                                                        <a href= "{% url 'interabri_detail' intervention.id %}"  class="list-group-item-info list-group-item list-group-item-action flex-column align-items-start">
+                                                                       <div class="d-flex w-100 justify-content-between">
+                                                                                       <h5 class="mb-1">Abris: {{intervention.acteur}}- {{intervention.alerte.localite}}</h5>
+                                                                                       <small>{{intervention.date_debut}}</small>
+                                                                       </div>
+                                                               <p> <strong>Date début: </strong>{{ intervention.date_debut}}</p>
+                                                                       <p><strong>Date fin: </strong>{{ intervention.date_fin}}</p> 
+                                                       {% comment %} <strong>Nombre de ménages assistés: </strong>{{ intervention.date_fin}} {% endcomment %}
+
+                                                       </a>
+                                                </div>
+                                               
+                                        {% endfor %}
+                               
+                                {% endif %}
+                                <!-- Liste des interventions WASH-->  
+                                {% if alerte.interventionwash_set.all%}                                         
+                                        {% for intervention in alerte.interventionwash_set.all %}
+                                        <div class="list-group">
+                                                        <a href= "{% url 'interventionwash-detail' intervention.id %}"  class="list-group-item-primary list-group-item list-group-item-action flex-column align-items-start">
+                                                                       <div class="d-flex w-100 justify-content-between">
+                                                                                       <h5 class="mb-1">WASH: {{intervention.acteur}}- {{intervention.alerte.localite}}</h5>
+                                                                                       <small>{{intervention.date_debut}}</small>
+                                                                       </div>
+                                                               <p> <strong>Date début: </strong>{{ intervention.date_debut}}</p>
+                                                                       <p><strong>Date fin: </strong>{{ intervention.date_fin}}</p> 
+                                                       {% comment %} <strong>Nombre de ménages assistés: </strong>{{ intervention.date_fin}} {% endcomment %}
+
+                                                       </a>
+                                                </div>
+                                               
+                                        {% endfor %}
+                              
+                                {% endif %}
+                                <!-- Liste des interventions Protection -->  
+                                {% if alerte.interventionprotection_set.all%}
+                                         
+                                        {% for intervention in alerte.interventionprotection_set.all %}
+                                                <div class="list-group">
+                                                         <a href= "{% url 'interventionprotection-detail' intervention.id %}"  class="list-group-item-warning list-group-item list-group-item-action flex-column align-items-start">
+                                                                        <div class="d-flex w-100 justify-content-between">
+                                                                                        <h5 class="mb-1">Protection: {{intervention.acteur}}- {{intervention.alerte.localite}}</h5>
+                                                                                        <small>{{intervention.date_debut}}</small>
+                                                                        </div>
+                                                                <p> <strong>Date début: </strong>{{ intervention.date_debut}}</p>
+                                                                        <p><strong>Date fin: </strong>{{ intervention.date_fin}}</p> 
+                                                        {% comment %} <strong>Nombre de ménages assistés: </strong>{{ intervention.date_fin}} {% endcomment %}
+
+                                                        </a>
+                                                 </div>
+                                                
+                                        {% endfor %}
+                               
+                                {% endif %}
+
+                                <!-- Liste des interventions SECAL -->  
+                                {% if alerte.interventionsecal_set.all%}
+                                         
+                                        {% for intervention in alerte.interventionsecal_set.all %}
+                                                <div class="list-group">
+                                                         <a href= "{% url 'intersecal_detail' intervention.id %}"  class="list-group-item-warning list-group-item list-group-item-action flex-column align-items-start">
+                                                                        <div class="d-flex w-100 justify-content-between">
+                                                                                        <h5 class="mb-1">SECAL: {{intervention.acteur}}- {{intervention.alerte.localite}}</h5>
+                                                                                        <small>{{intervention.date_debut}}</small>
+                                                                        </div>
+                                                                <p> <strong>Date début: </strong>{{ intervention.date_debut}}</p>
+                                                                        <p><strong>Date fin: </strong>{{ intervention.date_fin}}</p> 
+                                                        {% comment %} <strong>Nombre de ménages assistés: </strong>{{ intervention.date_fin}} {% endcomment %}
+
+                                                        </a>
+                                                 </div>
+                                                
+                                        {% endfor %}
+                               
+                                {% endif %}
+
+
+                                <!-- Liste des interventions Sante -->  
+                                {% if alerte.interventionrapidesante_set.all%}
+                                      
+                                         
+                                        {% for intervention in alerte.interventionrapidesante_set.all %}
+                                                <div class="list-group">
+                                                         <a href= "{% url 'intervention_rapide_detail_sante' intervention.id %}"  class="list-group-item-warning list-group-item list-group-item-action flex-column align-items-start">
+                                                                        <div class="d-flex w-100 justify-content-between">
+                                                                                        <h5 class="mb-1">Santé & Nutrition: intervention {{intervention.type_intervention_sante}} par:  {{intervention.acteur}}- {{intervention.alerte.localite}}</h5>
+                                                                                        <small>{{intervention.date_debut}}</small>
+                                                                        </div>
+                                                                <p> <strong>Date début: </strong>{{ intervention.date_debut}}</p>
+                                                                        <p><strong>Date fin: </strong>{{ intervention.date_fin}}</p> 
+                                                        {% comment %} <strong>Nombre de ménages assistés: </strong>{{ intervention.date_fin}} {% endcomment %}
+
+                                                        </a>
+                                                 </div>
+                                                
+                                        {% endfor %}
+                               
+                                {% endif %}
+
+
+
+                        {% endif %}       
+                        <!-- Liste des PIMs -->
+                        {% if alerte.pim_set.all%}
+                        {% comment %} <li class="list-group-item"><h4></h4></li> {% endcomment %}
+                        <div class="card-content">
+                        <h4 class="card-title">PIMs effectuées</h4>
+                                
+                                        {% for pim in alerte.pim_set.all %}
+                                        <div class="list-group">
+                                                        <a href= "{% url 'pim_detail' pim.id %}"  class="list-group-item-primary list-group-item list-group-item-action flex-column align-items-start">
+                                                                       <div class="d-flex w-100 justify-content-between">
+                                                                                       <h5 class="mb-1">{{pim.acteur}}: {{pim.get_type_eval_display}}- {{pim.alerte.localite}}</h5>
+                                                                                       <small>{{pim.date_debut}}</small>
+                                                                       </div>
+                                                               <p> <strong>Date début: </strong>{{ pim.date_debut}}</p>
+                                                                       <p><strong>Date fin: </strong>{{ pim.date_fin}}</p>                                                      
+                                                       </a>
+                                                </div>
+                                               
+                                        <!-- <li class="list-group-item"> <strong>Date d'évaluation: </strong>{{ pim.date_debut}}</li>
+                                                <li class="list-group-item"><strong>Type d'évaluation: </strong>{{ pim.get_type_eval_display}}</li
+                                                <hr /> -->
+                                        {% endfor %}
+                        </div>        
+               
+                        {% endif %}  
+
+                        
+                        
+                        
+                        </div>
+
+                </div>
+
+
+
+        
+        </div>
+</div>
+
+    <!-- Javascript pour la confirmation . A mettre avant endblock  -->
+    
+    <!--Oumarou Labo-->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!--Oumarou Labo-->
+    <script>
+        // id = id a approuver
+        // function confirmerEnvoiAlerte(id) { 
+        //     if (confirm("Voulez-vous envoyer l'alerte aux partenaires par email?\nVous ne pourrez plus annuler cette action!")) {
+        //         window.location.href = '/activities/envoi_alerte/' + id
+        //     }
+        // }
+
+
+        function confirmerCloturer(id) { 
+            
+
+            
+
+            Swal.fire({
+                        title: "<strong>Confirmation de cloture de l\'alerte! </strong>",
+                        icon: "info",
+                        html: `
+                        Etes-vous sur de cloturer l\'alerte?
+                        `,
+                        showCloseButton: true,
+                        showDenyButton: true,
+                        focusConfirm: false,
+                        confirmButtonText: `
+                        <i class="fa fa-thumbs-up"></i> Oui!
+                        `,
+                        confirmButtonAriaLabel: "Thumbs up, great!",
+                        denyButtonText: `
+                        <i class="fa fa-thumbs-down"></i> Non!
+                        `,
+
+                        }).then((result) => {
+
+                        /* Read more about isConfirmed, isDenied below */
+                        if (result.isConfirmed) {
+                                $.ajax({
+                                        type: 'GET',
+                                        url: '/activities/cloture/' + id,
+                                        success: function(response) {
+                                                if (response.success) {
+                                                Swal.fire("Alerte clôturée!", "", "success").then(() => {
+                                                        // Rediriger ou faire d'autres actions après la confirmation
+                                                        window.location.href = '/activities/alerte-detail/' + id;
+                                                });
+                                                } else {
+                                                Swal.fire("Erreur lors de la clôture de l'alerte", "", "error");
+                                                }
+                                        },
+                                        error: function(xhr, status, error) {
+                                                Swal.fire("Erreur lors de la clôture de l'alerte", "", "error");
+                                        }
+                                        });
+                                } else if (result.isDenied) {
+                                        Swal.fire("Clôture annulée", "", "info");
+                                }
+
+                        });
+                }
+
+
+
+                function confirmerNonCloturer(id) { 
+
+                        Swal.fire({
+                                        title: "<strong>Re-activation de l\'alerte! </strong>",
+                                        icon: "info",
+                                        html: `
+                                        Etes-vous sur de vouloir re-activer l\'alerte?
+                                        `,
+                                        showCloseButton: true,
+                                        showDenyButton: true,
+                                        focusConfirm: false,
+                                        confirmButtonText: `
+                                        <i class="fa fa-thumbs-up"></i> Oui!
+                                        `,
+                                        confirmButtonAriaLabel: "Thumbs up, great!",
+                                        denyButtonText: `
+                                        <i class="fa fa-thumbs-down"></i> Non!
+                                        `,
+
+                                        }).then((result) => {
+
+                                        /* Read more about isConfirmed, isDenied below */
+                                        if (result.isConfirmed) {
+                                                $.ajax({
+                                                        type: 'GET',
+                                                        url: '/activities/decloture/' + id,
+                                                        success: function(response) {
+                                                                if (response.success) {
+                                                                Swal.fire("Alerte re-activée!", "", "success").then(() => {
+                                                                        // Rediriger ou faire d'autres actions après la confirmation
+                                                                        window.location.href = '/activities/alerte-detail/' + id;
+                                                                });
+                                                                } else {
+                                                                Swal.fire("Erreur lors de la re-activation de l'alerte", "", "error");
+                                                                }
+                                                        },
+                                                        error: function(xhr, status, error) {
+                                                                Swal.fire("Erreur lors de la re-activation de l'alerte", "", "error");
+                                                        }
+                                                        });
+                                                } else if (result.isDenied) {
+                                                        Swal.fire("Re-activation de l'alerte annulée", "", "info");
+                                                }
+
+                                        });
+                                }
+
+
+
+
+
+
+        function confirmerEnvoiAlerte(id) { 
+
+            Swal.fire({
+                        title: "<strong>Confirmation d\'envoi de l\'alerte! </strong>",
+                        icon: "warning",
+                        html: `
+                        Voulez-vous envoyer l\'alerte aux partenaires par email?\nVous ne pourrez plus annuler cette action!
+                        `,
+                        showCloseButton: true,
+                        showDenyButton: true,
+                        focusConfirm: false,
+                        confirmButtonText: `
+                        <i class="fa fa-thumbs-up"></i> Oui!
+                        `,
+                        confirmButtonAriaLabel: "Thumbs up, great!",
+                        denyButtonText: `
+                        <i class="fa fa-thumbs-down"></i> Non!
+                        `,
+
+                        }).then((result) => {
+
+                        /* Read more about isConfirmed, isDenied below */
+                        if (result.isConfirmed) {
+                                $.ajax({
+                                        type: 'GET',
+                                        url: '/activities/envoi_alerte/' + id,
+                                        success: function(response) {
+                                                if (response.success) {
+                                                Swal.fire("Alerte envoyée!", "", "success").then(() => {
+                                                        // Rediriger ou faire d'autres actions après la confirmation
+                                                        window.location.href = '/activities/alerte-detail/' + id;
+                                                });
+                                                } else {
+                                                Swal.fire("Erreur lors de l'envoi de l'alerte", "", "error");
+                                                }
+                                        },
+                                        error: function(xhr, status, error) {
+                                                Swal.fire("Erreur lors de l'envoi de l'alerte", "", "error");
+                                        }
+                                        });
+                                } else if (result.isDenied) {
+                                        Swal.fire("Envoi annulée", "", "info");
+                                }
+
+                        });
+                }
+    </script>
+
+{% endblock content %}
+
+    
+<!-- {% if alerte.interventionwash_set.all%}
+<hr />       
+<h4>Liste  des interventions Wash effectuée</h4>
+{% for intervention in alerte.interventionwash_set.all %}
+       <strong>Date début: </strong>{{ intervention.date_debut}}
+       <strong>Date fin: </strong>{{ intervention.date_fin}}
+       {% comment %} <strong>Nombre de ménages assistés: </strong>{{ intervention.date_fin}} {% endcomment %}
+{% endfor %}
+{% else %}
+<li class="list-group-item"> <h4>Pas d'interventions effectuées WASH</h4></li>
+{% endif %} -->

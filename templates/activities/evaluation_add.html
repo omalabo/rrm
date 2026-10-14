@@ -1,0 +1,357 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+{% load static %}
+
+<!--Oumarou labo 31 Mai enlever et ajouter text-center intro p-1 rounded shadow-lg-->
+<div class="text-center intro p-1 rounded shadow-lg">
+       <h2>Enregistrer une évaluation</h2> 
+</div>
+<script src="{% static 'js/evalwizard.js' %}"></script>
+<style >
+      .form-check-label{ 
+    margin-left: 3%;
+}
+</style>
+<!--Oumarou labo 31 Mai enlever et ajouter class="container" style="background: #FFFF; width: 50%;" -->
+<div class="container" style="background: #FFFF; width: 50%;">
+     <form method="POST" enctype="multipart/form-data" >
+            {% csrf_token %}
+            {% load crispy_forms_tags %}          
+            {{form | crispy}}
+            <input type="submit" value="Enregistrer" class="btn btn-success">
+
+    </form>
+</div>
+
+
+
+<script>
+
+ $.datepicker.regional['fr'] = {
+                dateFormat: 'dd/mm/yy',
+                closeText: 'Fermer',
+                prevText: '&#x3c;Préc',
+                nextText: 'Suiv&#x3e;',
+                currentText: 'Aujourd\'hui',
+                monthNames: ['Janvier','Fevrier','Mars','Avril','Mai','Juin',
+                'Juillet','Aout','Septembre','Octobre','Novembre','Decembre'],
+                monthNamesShort: ['Jan','Fev','Mar','Avr','Mai','Jun',
+                'Jul','Aou','Sep','Oct','Nov','Dec'],
+                dayNames: ['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'],
+                dayNamesShort: ['Dim','Lun','Mar','Mer','Jeu','Ven','Sam'],
+                dayNamesMin: ['Di','Lu','Ma','Me','Je','Ve','Sa'],
+                weekHeader: 'Sm',
+                firstDay: 1,
+                isRTL: false,
+                showMonthAfterYear: false,
+                yearSuffix: '',
+                minDate: '-12M+0D',
+                maxDate: '+12M +0D',
+                numberOfMonths: 2,
+                showButtonPanel: true
+                };
+    
+    /*            $.datepicker.setDefaults($.datepicker.regional['fr']);
+        /* Include the jquery Ui here 
+            // DateTimePicker settings
+            $(function() {
+                    $( "#id_date_debut" ).datepicker({
+                    changeMonth: true,
+                    changeYear: true,
+                //  minDate: -20, maxDate: "+1M +10D" ,
+                    });
+
+                    $( "#id_date_fin" ).datepicker({
+                    changeMonth: true,
+                    changeYear: true,
+                //  minDate: -20, maxDate: "+1M +10D" ,
+                    });
+                    $( "#id_date_publication_rapport" ).datepicker({
+                    changeMonth: true,
+                    changeYear: true,
+                //  minDate: -20, maxDate: "+1M +10D" ,
+                    });
+            });
+*/
+
+$(document).ready(function(){
+    var protection_fields =[ "label[for=id_p_attaqueecole], input#id_p_attaqueecole",
+                            "label[for=id_p_attaquecentresante], input#id_p_attaquecentresante",
+                            "label[for=id_p_ena], input#id_p_ena",
+                            "label[for=id_p_es], input#id_p_es",
+                            "label[for=id_p_orphelin], input#id_p_orphelin",
+                            "label[for=id_p_eafga], input#id_p_eafga",
+                            "label[for=id_p_vs], input#id_p_vs",
+                            "label[for=id_p_viol], input#id_p_viol",
+                            "label[for=id_p_violenfant], input#id_p_violenfant",
+                            "label[for=id_p_recrutement], input#id_p_recrutement",
+                            "label[for=id_p_recrutementenfant], input#id_p_recrutementenfant",
+                            "label[for=id_p_enlevement], input#id_p_enlevement",
+                            "label[for=id_p_enlevementenfant], input#id_p_enlevementenfant",
+                            ];
+    var sante_fields = [
+                            "label[for=id_mortaliteu5], input#id_mortaliteu5",
+                            "label[for=id_mortalite], input#id_mortalite",
+                            "label[for=id_rougeole], input#id_rougeole",
+                            "label[for=id_dtc3], input#id_dtc3",
+                            "label[for=id_polio], input#id_polio",
+                            "label[for=id_servicescurratifs], input#id_servicescurratifs",
+                            "label[for=id_servicescurratifsu5], input#id_servicescurratifsu5",
+                            "label[for=id_consulations], input#id_consulations",
+                            "label[for=id_diarrhee], input#id_diarrhee",
+                            "label[for=id_paludisme], input#id_paludisme",
+                            "label[for=id_ira], input#id_ira",
+                            "label[for=id_diarrheeu5], input#id_diarrheeu5",
+                            "label[for=id_paludismeu5], input#id_paludismeu5",
+                            "label[for=id_irau5], input#id_irau5",
+                            ];
+    var secal_fields = [
+                            "label[for=id_sa_sca], input#id_sa_sca",
+                            "label[for=id_sa_pctscapauvre], input#id_sa_pctscapauvre",
+                            "label[for=id_sa_sda], input#id_sa_sda",
+                            "label[for=id_sa_isss], input#id_sa_isss",
+                            "label[for=id_sa_pctventeagricole], input#id_sa_pctventeagricole",
+                            "label[for=id_sa_pctventeanimaux], input#id_sa_pctventeanimaux",
+                            "label[for=id_sa_pctventepeche], input#id_sa_pctventepeche",
+                            "label[for=id_sa_pctventecharbon], input#id_sa_pctventecharbon",
+                            "label[for=id_sa_pctpetitcommerce], input#id_sa_pctpetitcommerce",
+                            "label[for=id_sa_pctjournalier], input#id_sa_pctjournalier",
+                            "label[for=id_sa_pctartisanat], input#id_sa_pctartisanat",
+                            "label[for=id_sa_pctlocatif], input#id_sa_pctlocatif",
+                            "label[for=id_sa_pcttransfertargent], input#id_sa_pcttransfertargent",
+                            "label[for=id_sa_pctautre], input#id_sa_pctautre",
+                        ];
+    var wash_fields = [
+                            "label[for=id_wa_tauxdiarrheeu5], input#id_wa_tauxdiarrheeu5",
+                            "label[for=id_wa_pctutilisationlatrine], input#id_wa_pctutilisationlatrine",
+                            "label[for=id_wa_pctacceslatrine], input#id_wa_pctacceslatrine",
+                            "label[for=id_wa_pctsavon], input#id_wa_pctsavon",
+                            "label[for=id_wa_pctmomentcles], input#id_wa_pctmomentcles",
+                            "label[for=id_wa_pctlavagemains], input#id_wa_pctlavagemains",
+                            "label[for=id_wa_pctutiliseeauamelioree], input#id_wa_pctutiliseeauamelioree",
+                            "label[for=id_wa_litreeaumenageparjour], input#id_wa_litreeaumenageparjour",
+                            "label[for=id_wa_pctacceseauprotege], input#id_wa_pctacceseauprotege",
+
+                        ];
+    var edu_fields = [
+                            "label[for=id_pctenfdeplacesnonscolarises], input#id_pctenfdeplacesnonscolarises",
+                            "label[for=id_pctenfcomnonscolarises], input#id_pctenfcomnonscolarises",
+                            "label[for=id_pctecolefonctionnel], input#id_pctecolefonctionnel",
+                            "label[for=id_eleveparsalle], input#id_eleveparsalle",
+                            "label[for=id_eleveparenseignant], input#id_eleveparenseignant",
+
+                            ];
+    var abri_fields = [
+                            "label[for=id_n_pctabrimauvaisetat], input#id_n_pctabrimauvaisetat",
+                            "label[for=id_a_pctmenagehebergeant], input#id_a_pctmenagehebergeant",
+                            "label[for=id_a_moypersonnehebergee], input#id_a_moypersonnehebergee",
+                            "label[for=id_a_moym2parpersonne], input#id_a_moym2parpersonne",
+
+                         ];
+    var nfi_fields = ["label[for=id_n_scorenfi], input#id_n_scorenfi"
+                    ];
+    
+    $.each(protection_fields,function(index,value){
+        $(value).hide(); 
+        var field_id =value.split("input")[1].trim();
+        $(field_id).removeAttr('required');
+                        });
+   $.each(sante_fields,function(index,value){
+        $(value).hide();
+        var field_id =value.split("input")[1].trim();
+        $(field_id).removeAttr('required');
+                });
+   $.each(secal_fields,function(index,value){
+        $(value).hide();
+        var field_id =value.split("input")[1].trim();
+        $(field_id).removeAttr('required');
+                });
+   $.each(wash_fields,function(index,value){
+        $(value).hide();
+        var field_id =value.split("input")[1].trim();
+         $(field_id).removeAttr('required');
+                });   
+   $.each(edu_fields,function(index,value){
+        $(value).hide();
+        var field_id =value.split("input")[1].trim();
+         $(field_id).removeAttr('required');
+                });   
+   $.each(abri_fields,function(index,value){
+        $(value).hide();
+        var field_id =value.split("input")[1].trim();
+        $(field_id).removeAttr('required');
+                });   
+   $.each(nfi_fields,function(index,value){
+         $(value).hide();
+         var field_id =value.split("input")[1].trim();
+        $(field_id).removeAttr('required');
+             }); 
+    // NFI
+    $('#id_secteur_nfi').click(function(){
+        if ($(this).is(":checked")){
+            $.each(nfi_fields,function(index,value){
+                 $(value).show();
+                 var field_id =value.split("input")[1].trim();
+                 $(field_id).attr('required');
+                 });   
+                 
+        }
+        else{
+            $.each(nfi_fields,function(index,value){
+                 $(value).hide();
+                 var field_id =value.split("input")[1].trim();
+                 $(field_id).removeAttr('required');
+                 }); 
+        }             
+    });
+
+    // ABRI
+    $('#id_secteur_abri').click(function(){
+        if ($(this).is(":checked")){
+            $.each(abri_fields,function(index,value){
+                 $(value).show();
+                 var field_id =value.split("input")[1].trim();
+                 $(field_id).attr('required');
+                 }); 
+        }
+        else{
+            $.each(abri_fields,function(index,value){
+                 $(value).hide();
+                 var field_id =value.split("input")[1].trim();
+                 $(field_id).removeAttr('required');
+                 }); 
+
+        }
+
+    });
+
+    // WASH
+    $('#id_secteur_wash').click(function(){
+        if ($(this).is(":checked")){
+            $.each(wash_fields,function(index,value){
+                 $(value).show();
+                 var field_id =value.split("input")[1].trim();
+                 $(field_id).attr('required');
+                 }); 
+        }
+        else{
+            $.each(wash_fields,function(index,value){
+                 $(value).hide();
+                 var field_id =value.split("input")[1].trim();
+                 $(field_id).removeAttr('required');
+                 }); 
+
+        }
+
+    });
+    // Protection
+    $('#id_secteur_protection').click(function(){
+        if ($(this).is(":checked")){
+            $.each(protection_fields,function(index,value){
+                 $(value).show();
+                 var field_id =value.split("input")[1].trim();
+                 //document.getElementById(field_id).required=false;
+                 $(field_id).attr('required');
+                 }); 
+        }
+        else{
+            $.each(protection_fields,function(index,value){
+                 $(value).hide();
+                 var field_id =value.split("input")[1].trim();
+                // $(field_id).removeAttr('required');
+                 }); 
+
+        }
+
+    });
+
+    // Education
+    $('#id_secteur_education').click(function(){
+        if ($(this).is(":checked")){
+            $.each(edu_fields,function(index,value){
+                 $(value).show();
+                 var field_id =value.split("input")[1].trim();
+                 $(field_id).attr('required');
+                 }); 
+        }
+        else{
+            $.each(edu_fields,function(index,value){
+                 $(value).hide();
+                 var field_id =value.split("input")[1].trim();
+                 $(field_id).removeAttr('required');
+                 }); 
+
+        }
+
+    });
+    //  Sécurité alimentaire
+    $('#id_secteur_secal').click(function(){
+        if ($(this).is(":checked")){
+            $.each(secal_fields,function(index,value){
+                 $(value).show();
+                 var field_id =value.split("input")[1].trim();
+                 $(field_id).attr('required');
+                 }); 
+        }
+        else{
+            $.each(secal_fields,function(index,value){
+                 $(value).hide();
+                 var field_id =value.split("input")[1].trim();
+                 $(field_id).removeAttr('required');
+                 }); 
+
+        }
+
+    });
+    // Santé 
+    $('#id_secteur_sante').click(function(){
+        if ($(this).is(":checked")){
+            $.each(sante_fields,function(index,value){
+                 $(value).show();
+                 var field_id =value.split("input")[1].trim();
+                 $(field_id).attr('required');
+                 }); 
+        }
+        else{
+            $.each(sante_fields,function(index,value){
+                 $(value).hide();
+                 var field_id =value.split("input")[1].trim();
+                 $(field_id).removeAttr('required');
+                 }); 
+
+        }
+
+    });
+
+    // Clique sur le bouton "Evaluation conjointe"
+       $("#div_id_acteurs").hide();
+       $('#id_acteurs').removeAttr('required');
+       $("#id_eval_conjointe").click(function(){
+        if($(this).is(':checked')){
+                $("#div_id_eval_non_conjointe_raison").hide()
+                $("#id_eval_non_conjointe_raison").removeAttr('required');
+                $("#div_id_acteurs").show();
+                $('#id_acteurs').attr('required');
+
+            
+            }
+            else{
+                $("#div_id_eval_non_conjointe_raison").show();
+                $('#id_eval_non_conjointe_raison').attr('required');
+                $("#div_id_eval_non_conjointe_raison").css("background-color", "yellow")
+                // Liste des autres acteurs
+                $("#div_id_acteurs").hide();
+                $('#id_acteurs').removeAttr('required');
+                
+                
+            }
+            
+        });
+  
+    
+});
+</script>
+{% endblock content %}
+

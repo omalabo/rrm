@@ -1,0 +1,133 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+
+    <div class="jumbotron jumbotron-fluid" >
+        <div style="margin-left:  5% ">
+            <h2> Détails de l'intervention WASH effectuée par {{interventionwash.acteur}} à {{interventionwash.alerte.localite}}</h2>
+            <hr>
+            <h4><p>Région de :  {{interventionwash.alerte.localite.commune.departement.region}} </p>
+            <p> Département:  {{interventionwash.alerte.localite.commune.departement}} </p>
+            <p> Commune de:  {{interventionwash.alerte.localite.commune}} </p>
+            <p>Acteur :  {{interventionwash.acteur}}</p>
+            <p>Date début:   {{interventionwash.date_debut}}</p>
+            <p>Date fin: {{interventionwash.date_fin}}</p>
+            {% if interventionwash.user_update %}
+            <p>Dernière personne ayant apporté une modification: {{interventionwash.user_update.last_name}}</p>
+         
+            {% endif %}
+            </h4>
+        </div>
+
+   </div>
+<!-- Autoriser la modification uniquement lorsque l'élement n'est pas validé-->
+<!--oummarou labo mb-2-->
+<a class="btn btn-secondary mb-2" style="margin-left: 5%" href=" {% url 'alerte_detail' interventionwash.alerte.id %}">Retour à liste des alertes</a>
+{% if user.last_name|lower == interventionwash.acteur|lower %}
+ <a class="btn btn-primary" href="{% url 'update-wash' interventionwash.id %}">Modifier</a>
+{% endif %}
+
+ 
+ 
+ 
+ <!-- {% if interventionwash.validation == 1 and user.categorie == 3 %}
+ <form method="post" action="{% url 'validate_inter_wash' interventionwash.id %}">
+                {% csrf_token %}
+        <button class="btn btn-success"  type="submit">Valider</button>
+</form>
+                
+ {% else %}
+        <button class="btn btn-success disabled"  type="submit"  title="Enregistrement déjà validé">Valider</button> 
+
+ {% endif %} -->
+<div style="margin-left: 5% ;margin-right:10%" class="card" style="width:  18rem;">
+  <ul class="list-group-striped  list-group-flush" >
+        <li class="list-group-item">
+                <p><strong>Modalite de l'intervention </strong>: {{interventionwash.modalite_intervention}}</p>
+        </li>
+        <li class="list-group-item">
+                <p><strong>Montant total distribué (CFA)</strong>: {{interventionwash.montant_cash}}</p>
+        </li>
+        <li class="list-group-item">
+                <p><strong>Nombre de station d'eau de pompage et de traitement d'eau mis en place</strong>: {{interventionwash.nbStationEauPompage}}</p>
+        </li>
+        <li class="list-group-item">
+                <p><strong>Nombre de personnes ayant besoin Eau</strong>: {{interventionwash.nbPersBesoinsEau}}</p>
+        </li>
+        <li class="list-group-item">
+                <p><strong>Nombre de water trucking mis en place</strong>: {{interventionwash.nbWaterTruckingService}}</p>
+        </li>
+        <li class="list-group-item">
+                <p><strong>Nombre de points d'eau réhabilités</strong>: {{interventionwash.nbPointEauRehabilite}}</p>                
+        </li>
+         <li class="list-group-item">
+                <p><strong>Nombre de points d'eau traités</strong>: {{interventionwash.nbPointEauTraite}}</p>                
+        </li>
+         <li class="list-group-item">
+                <p><strong>Nombre de beneficiaires eau d'urgence</strong>: {{interventionwash.nbPersBenefEauUrgence}}</p>                
+        </li>
+         <li class="list-group-item">
+                <p><strong>Nombre de latrines d'urgence construit</strong>: {{interventionwash.nbLatrineUrgence}}</p>                
+        </li>
+         <li class="list-group-item">
+                <p><strong>Total hommes bénéficiare latrine</strong>: {{interventionwash.homme_benef_latrine}}</p>                
+        </li>
+        <li class="list-group-item">
+                <p><strong>Total femmes bénéficiare latrine</strong>: {{interventionwash.femme_benef_latrine}}</p>                
+        </li>
+        <li class="list-group-item">
+                <p><strong>Total filles bénéficiaire latrine</strong>: {{interventionwash.fille_benef_latrine}}</p>                
+        </li>
+        <li class="list-group-item">
+                <p><strong>Total Garçons bénéficiaire latrine</strong>: {{interventionwash.garcon_benef_latrine}}</p>                
+        </li>
+        <li class="list-group-item">
+                <p><strong>Tranchee de defecation</strong>: {{interventionwash.nbTrancheedefecation}}</p>                
+        </li>
+        <li class="list-group-item">
+                <p><strong>Total de sensibilisation à l'hygiène réalisée</strong>: {{interventionwash.nbSensibilisation}}</p>                
+        </li>
+        <li class="list-group-item">
+                <p><strong>"Nombre de personnes ciblees ayant participe aux sensibilisation sur Hygiene et Assainissement</strong>: {{interventionwash.nbPersonneSensibilisation}}</p>                
+        </li>
+        <li class="list-group-item">
+                <p><strong>Total Hommes bénéficiare sensibilisation</strong>: {{interventionwash.homme_benef_sens}}</p>                
+        </li>
+        <li class="list-group-item">
+                <p><strong>Total Femmes bénéficiare sensibilisation</strong>: {{interventionwash.femmes_benef_sens}}</p>                
+        </li>
+         <li class="list-group-item">
+                <p><strong>Total Filles bénéficiaire sensibilisation</strong>: {{interventionwash.fille_benef_sens}}</p>                
+        </li>
+        <li class="list-group-item">
+                <p><strong>Total Garçons bénéficiaire sensibilisation</strong>: {{interventionwash.garcon_benef_sens}}</p>                
+        </li>
+        <li class="list-group-item">
+                <p><strong>Menages beneficiaires Kits hygiene</strong>: {{interventionwash.nbMenageBenefKitsHygiene}}</p>                
+        </li>
+        <li class="list-group-item">
+                <p><strong>Nbre des produits de purifiants d'eau distribués (Aquatabs/PUR)</strong>: {{interventionwash.nbProduitPurifiant}}</p>                
+        </li>
+        <li class="list-group-item">
+                <p><strong>Nombre de personnes bénéficiaires des produits purifiants (Pur et Aquatabs)</strong>: {{interventionwash.nbPersonneProduitPurifiant}}</p>                
+        </li>
+        <li class="list-group-item">
+                <p><strong>Quelle est la principale raison du retard</strong>: {{interventionwash.get_principale_raison_retard_display}}</p>                
+        </li>
+        <li class="list-group-item">
+                <p><strong>Veuillez détailler les raisons du retard</strong>: {{interventionwash.commentaires_delais}}</p>                
+        </li>
+
+    </ul>
+    </div>
+
+
+<!-- Autoriser la modification uniquement lorsque l'élement n'est pas validé-->
+<!--oummarou labo mt-2-->
+<a class="btn btn-secondary mt-2" style="margin-left: 5%" href=" {% url 'list_interventionwash'%}">Retour aux interventions</a>
+{% if user.last_name|lower == interventionwash.acteur|lower %}
+ <a class="btn btn-primary" href="{% url 'update-wash' interventionwash.id %}">Modifier</a>
+ {% endif %}
+
+{% endblock content %}

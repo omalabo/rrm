@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+
+    {% load static %}
+    
+        <link rel="stylesheet" href="{% static 'css/custum_white_on_blue_background.css' %}">
+        <script src="{% static 'js/datepicker_spec.js' %}"></script>
+        <!--Oumarou labo 31 Mai ajouter p-1 rounded shadow-lg-->
+        <div class="text-center intro p-1 rounded shadow-lg" style="margin-left: 25%;margin-right: 25%;">
+            
+            <!--Oumarou labo -->
+            {% if '/activities/interprotection-update/' in request.path %}
+            <h2>Mise à jour de l'intervention en Protection </h2>
+            {% else %}
+                <h2>Enregistrer une intervention en Protection</h2>
+            {% endif %}
+            <!--Oumarou labo -->
+        </div>
+        <div class="container" style="background: #FFFF; width: 50%;" >
+          
+                <div style="margin:5%">
+                    <form method="POST">
+                         {% load crispy_forms_tags %}
+                        {% csrf_token %}
+                        {{form|crispy}}
+                        <!--Oumarou labo -->
+                        {% if '/activities/interprotection-update/' in request.path %}
+                        <input type="submit" value="Modifier" class="btn btn-success">
+                        {% else %}
+                        <input type="submit" value="Enregistrer" class="btn btn-success">
+                        {% endif %}
+                        <!--Oumarou labo -->
+                    </form>               
+                </div>
+                
+            </div>
+        </div>
+    
+{% endblock content %}
+    

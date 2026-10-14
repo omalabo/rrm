@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% load static %}
+<script src="{% static 'js/datepicker_spec.js' %}"></script>
+<script src="{% static 'js/eva_form_nav.js' %}"></script>
+
+<link rel="stylesheet" href="{% static 'css/label_adjust.css' %}">
+
+<div class="jumbotron text-center">
+    <h2>Edition d'une évaluation</h2>
+</div> 
+<div style="margin-left: 10%;margin-right: 20%;margin-top: 50px;margin-bottom: 5%">
+    <form action="" method="POST">
+        {% csrf_token %}
+        {% load crispy_forms_tags %}
+        {{ form|crispy }} 
+        <input type="submit" value="Submit" class="btn btn-success">
+    </form>
+</div>
+<script>
+        $(document).ready(function(){
+            $("#div_id_validation").hide();
+        })
+    </script>
+{% endblock content %}
+    

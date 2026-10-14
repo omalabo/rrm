@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+<div class="jumbotron jumbotron-fluid" >
+ <div style="margin-left:  5% ">
+    <h2> Détails de la PIM effectuée par {{pim.acteur}} à {{pim.alerte.localite}}</h2>
+    <hr>
+    <h4><p>Région de :  {{pim.alerte.localite.commune.departement.region}} </p>
+       <p> Département:  {{pim.alerte.localite.commune.departement}} </p>
+       <p> Commune de:  {{pim.alerte.localite.commune}} </p>
+       <p>Acteur :  {{pim.acteur}}</p>
+       <p>Date début:   {{pim.date_debut}}</p>
+       <p>Date fin: {{pim.date_fin}}</p>
+    </h4>
+ </div>
+
+</div>
+<!-- Autoriser la modification uniquement lorsque l'élement n'est pas validé-->
+<!--oummarou labo mb-2-->
+<a class="btn btn-secondary mb-2" style="margin-left: 5%" href=" {% url 'alerte_detail' pim.alerte.id %}">Retour à l'alerte</a>
+{% if user.last_name|lower == pim.acteur|lower  %} 
+ <a class="btn btn-primary" href="{% url 'update-pim' pim.id %}">Modifier</a>
+ {% endif %}
+
+
+         
+<div style="margin-left: 5% ;margin-right:10%" class="card" style="width:  18rem;">
+   <ul class="list-group-striped  list-group-flush" >
+         <!-- <li class="list-group-item">
+                 <p><strong>Secteur</strong>: {{pim.secteur_pim}}</p>
+         </li>
+         <li class="list-group-item">
+                <p><strong>Acteur ayant enregistré l'alerte</strong>: {{pim.acteur}}</p>
+        </li>
+         <li class="list-group-item">
+                 <p><strong>Date de début de la PIM</strong>: {{pim.date_debut}}</p>
+         </li>
+         <li class="list-group-item">
+                 <p><strong>Date de fin de la PIM</strong>: {{pim.date_fin}}</p>
+         </li>
+         <li class="list-group-item">
+                 <p><strong>Nombre total de ménages enquêtés</strong>: {{pim.menages_enquetes}}</p>
+         </li>
+         <li class="list-group-item">
+                 <p><strong>"Nombre de ménages déplacés internes (enquêtés)</strong>: {{pim.menages_deplaces}}</p>
+         </li>
+         <li class="list-group-item">
+                 <p><strong>Nombre de ménages retournés (enquêtés)</strong>: {{pim.menages_retournes}}</p>
+         </li>
+         <li class="list-group-item">
+                 <p><strong>Nombre de ménages réfugiés (enquêtés)</strong>: {{pim.menages_refugiees}}</p>
+         </li> 
+         <li class="list-group-item">
+                 <p><strong>Nombre de ménages hôtes (enquêtés)</strong>: {{pim.menages_hotes}}</p>
+         </li>
+         <li class="list-group-item">
+                 <p><strong>Nombre total d'individus enquêtés</strong>: {{pim.individus_enquetes}}</p>
+         </li>
+         <li class="list-group-item">
+                 <p><strong>Nombre total de femmes enquêtées</strong>: {{pim.individus_femmes}}</p>
+         </li>
+         <li class="list-group-item">
+                 <p><strong>Nombre total de hommes enquêtés</strong>: {{pim.individus_hommes}}</p>
+         </li>
+         <li class="list-group-item">
+                 <p><strong>Nombre total de filles enquêtées</strong>: {{pim.individus_filles}}</p>
+         </li>
+         <li class="list-group-item">
+                 <p><strong>Nombre total de garcons enquêtés</strong>: {{pim.individus_garcons}}</p>
+         </li> -->
+ 
+         </ul>
+ </div>
+ <!-- Autoriser la modification uniquement lorsque l'élement n'est pas validé-->
+ <!--oummarou labo mt-2-->
+ <a class="btn btn-secondary mt-2" style="margin-left: 5%" href=" {% url 'list_pim' %}">Retour à la liste des PIMs</a>
+ {% if user.last_name|lower == pim.acteur|lower %}
+  <a class="btn btn-primary" href="{% url 'update-pim' pim.id %}">Modifier</a>
+  {% endif %}
+ 
+  
+       
+
+
+{% endblock %}
+

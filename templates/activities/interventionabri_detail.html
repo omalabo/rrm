@@ -1,0 +1,140 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+<div class="jumbotron jumbotron-fluid" >
+ <div style="margin-left:  5% ">
+    <h2> Détails de l'intervention Abri effectuée par {{interventionabri.acteur}} à {{interventionabri.alerte.localite}}</h2>
+    <hr>
+    <h4><p>Région de :  {{interventionabri.alerte.localite.commune.departement.region}} </p>
+       <p> Département:  {{interventionabri.alerte.localite.commune.departement}} </p>
+       <p> Commune de:  {{interventionabri.alerte.localite.commune}} </p>
+       <p>Acteur :  {{interventionabri.acteur}}</p>
+       <p>Date début:   {{interventionabri.date_debut}}</p>
+       <p>Date fin: {{interventionabri.date_fin}}</p>
+       {% if interventionabri.user_update %}
+       <p>Dernière personne ayant apporté une modification: {{interventionabri.user_update.last_name}}</p>
+    
+        {% endif %}
+    </h4>
+ </div>
+
+</div>
+<!-- Autoriser la modification uniquement lorsque l'élement n'est pas validé-->
+<!--oummarou labo mb-2-->
+<a class="btn btn-secondary mb-2" style="margin-left: 5%" href=" {% url 'alerte_detail' interventionabri.alerte.id %}">Retour à l'alerte</a>
+{% if user.last_name|lower == interventionabri.acteur|lower  %} 
+ <a class="btn btn-primary" href="{% url 'update-abri' interventionabri.id %}">Modifier</a>
+ {% endif %}
+
+ 
+ 
+ 
+ <!-- {% if interventionabri.validation == 1 and user.categorie == 3 %}
+ <form method="post" action="{% url 'validate_inter_abri' interventionabri.id %}">
+                {% csrf_token %}
+<button class="btn btn-success"  type="submit">Valider</button>
+</form>
+                
+ {% else %}
+        <button class="btn btn-success disabled"  type="submit"  title="Enregistrement déjà validé">Valider</button> 
+
+ {% endif %}  -->
+
+ 
+         
+<div style="margin-left: 5% ;margin-right:10%" class="card" style="width:  18rem;">
+  <ul class="list-group-striped  list-group-flush" >
+        <li class="list-group-item">
+                <p><strong>Modalité de l'intervention</strong>: {{interventionabri.modalite_intervention}}</p>
+        </li>
+        <li class="list-group-item">
+                <p><strong>Montant total distribué (CFA)</strong>: {{interventionabri.montant_cash}}</p>
+        </li>
+        <li class="list-group-item">
+                <p><strong>Nombre de ménages enregistrés</strong>: {{interventionabri.menage_enregistre}}</p>
+        </li>
+        <li class="list-group-item">
+                <p><strong>Nombre de ménages cibles</strong>: {{interventionabri.menage_cible}}</p>
+        </li>
+        <li class="list-group-item">
+                <p><strong>Nombre de ménages IDP assistés</strong>: {{interventionabri.menage_IDP_assiste}}</p>
+        </li>
+        <li class="list-group-item">
+                <p><strong>Nombre de ménages autochtones assistés</strong>: {{interventionabri.menage_autochtone_assiste}}</p>
+        </li>
+        <li class="list-group-item">
+                <p><strong>Nombre de ménages refugiés assistés</strong>: {{interventionabri.menage_refugie_assiste}}</p>
+        </li>
+        <li class="list-group-item">
+                <p><strong>Nombre de ménages retournés assistés</strong>: {{interventionabri.menage_retourne_assiste}}</p>
+        </li>
+        <li class="list-group-item">
+                <p><strong>Nombre d'hommes enregistrés</strong>: {{interventionabri.homme_assiste}}</p>
+        </li>
+        <li class="list-group-item">
+                <p><strong>Nombre d'hommes assistés</strong>: {{interventionabri.homme_assiste}}</p>
+        </li>
+        <li class="list-group-item">
+                <p><strong>Nombre de femmes assistées</strong>: {{interventionabri.femme_assiste}}</p>
+        </li>
+        <li class="list-group-item">
+                <p><strong>Nombre de garçons assistés</strong>: {{interventionabri.garcon_assiste}}</p>
+        </li>
+        <li class="list-group-item">
+                <p><strong>Nombre de filles assistés</strong>: {{interventionabri.fille_assiste}}</p>
+        </li>
+       <!--  <li class="list-group-item">
+                <p><strong>Nombre de femmes enceintes assistées</strong>: {{interventionabri.femme_enceinte}}</p>
+        </li>
+        <li class="list-group-item">
+                <p><strong>Nombre de bébés assistés</strong>: {{interventionabri.bebe_assiste}}</p>
+        </li>
+        <li class="list-group-item">
+                <p><strong>Nombre de bébés assistés</strong>: {{interventionabri.bebe_assiste}}</p>
+         --></li>
+        
+        {% if interventionabri.modalite_intervention == "inkind" %}
+        <li class="list-group-item">
+                <p><strong>Nombre de kits distribués</strong>: {{interventionabri.kit_distribue}}</p>
+        </li>
+       <!--  <li class="list-group-item">
+                <p><strong>Nombre de kits hygiène distribués</strong>: {{interventionabri.kit_hygiene}}</p>
+        </li>
+        <li class="list-group-item">
+                <p><strong>Nombre de kits bébé distribués</strong>: {{interventionabri.kit_bebe}}</p>
+        </li>    -->     
+        {% endif %}
+        <li class="list-group-item">
+                <p><strong>Principale raison du retard</strong>: {{interventionabri.get_principale_raison_retard_display}}</p>
+        </li>  
+        <li class="list-group-item">
+                <p><strong>Commentaires supplémentaires sur le retard </strong>: {{interventionabri.commentaires_delais}}</p>
+        </li> 
+
+        </ul>
+</div>
+<!-- Autoriser la modification uniquement lorsque l'élement n'est pas validé-->
+<!--oummarou labo mt-2-->
+<a class="btn btn-secondary mt-2" style="margin-left: 5%" href=" {% url 'list_interventionabri' %}">Retour à la liste des interventions</a>
+{% if user.last_name|lower == interventionabri.acteur|lower %}
+ <a class="btn btn-primary" href="{% url 'update-abri' interventionabri.id %}">Modifier</a>
+ {% endif %}
+
+ 
+ <!-- {% if interventionabri.validation == 1 and user.categorie == 3 %}
+ <form method="post" action="{% url 'validate_inter_abri' interventionabri.id %}">
+                {% csrf_token %}
+        <button class="btn btn-success"  type="submit">Valider</button>
+</form>
+                
+ {% else %}
+        <button class="btn btn-success disabled"  type="submit"  title="Enregistrement déjà validé">Valider</button> 
+
+ {% endif %}  -->
+
+        
+
+
+{% endblock %}
+

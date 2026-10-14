@@ -1,0 +1,206 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+{% load static %}
+
+
+   <!--Oumarou labo 31 Mai ajouter style -->
+   <style>
+    .table-responsive {
+      overflow-x: auto;
+  }
+  
+  .table {
+      width: 100%;
+      table-layout: fixed;
+  }
+  
+  .card.card-body.container {
+      width: 100%;
+      max-width: 75%;
+  }
+  
+  .table-header {
+       /* Empêche le texte de passer à la ligne */
+      font-size: 0.9vw; /* Taille de la police */
+  }
+  
+  </style>
+  
+    <br>
+    <div class ="col-md">
+        <!--Oumarou labo 31 Mai ajouter p-1 rounded shadow-lg style="margin-left: 13%; margin-right: 13%;"-->
+        <div class="text-center intro p-1 rounded shadow-lg"  style="margin-left: 13%; margin-right: 13%;"   >
+            <h3>Liste des évaluations</h3>
+        </div>
+ <!-- Filtering -->
+
+        <div class="card card-body container" style="width: 90%;">
+        
+        <form class="form-inline" action="{% url 'recherche_evaluation' %}" method="get"> 
+            {% csrf_token %}
+            <div class="form-group mb-2 mr-1">
+                <label for="input1" class="sr-only">Label 1</label>
+                <select class="form-control" id="input1" name="region"
+                onchange="document.getElementById('region').value = this.value">
+                    <option value="">Toutes les régions</option>
+                    {% for list_region in list_regions %}
+                    <option value="{{list_region.id}}" {% if list_region.id == values.region|add:0 %}selected{% endif %}>{{list_region.get_name_display}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group mx-sm-3 mb-2 mr-1">
+                <label for="input2" class="sr-only">Label 2</label>
+                <select class="form-control" id="input2" name="commune"
+                onchange="document.getElementById('commune').value = this.value">
+                    <option value="">Toutes les communes</option>
+                    {% for list_commune in list_communes %}
+                    <option value="{{list_commune.id}}" {% if list_commune.id == values.commune|add:0 %}selected{% endif %}>{{list_commune.get_name_display}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group mb-2 mr-3">
+                <label for="input3" class="sr-only">Label 3</label>
+                <select class="form-control form-control-sm" id="input3" name="acteur"
+                onchange="document.getElementById('acteur').value = this.value">
+                    <option value="">Tous les acteurs</option>
+                    {% for list_acteur in list_acteurs %}
+                    <option value="{{list_acteur.id}}" {% if list_acteur.id == values.acteur %}selected{% endif %}>{{list_acteur.get_name_display}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary mb-2 btn-sm">Recherche</button>
+            <a href="{% url 'list_evaluation'%}" class="btn btn-secondary mb-2 ml-2 btn-sm">Initialiser</a>
+              <!-- Telecharger -->
+              <div class="dropdown">
+              <button class="btn btn-success mb-2 ml-2 btn-sm dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Télécharger
+              </button>
+              <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                <!-- {% url 'telecharger_alerte_excel'%} -->
+                <a class="dropdown-item" href="#" onclick="telechargerEvaluation(1)">Format EXCEL</a>
+                <a class="dropdown-item" href="#" onclick="telechargerEvaluation(2)">Format CSV</a>
+              </div>
+            </div>
+              <!-- Telechager -->
+            </form>
+            <!-- Telechager 2-->
+            <form action="{%url 'telecharger_evaluation'%}" id="formtelechargerevaluation" method="post" class="d-none">
+              {%csrf_token%}
+              <input type="text" name="region" id="region">
+              <input type="text" name="commune" id="commune">
+              <input type="text" name="acteur" id="acteur">
+              <input type="text" name="typefichier" id="typefichier">
+              <!-- Telechager 2-->
+          </form>
+              
+        </div>
+ <!-- Filtering -->
+        <!--Oumarou labo 31 Mai ajouter table-responsive" style="width: 100%; "-->
+        <div class="card card-body container table-responsive" style="width: 100%;">
+          <!--Oumarou labo 31 Mai ajouter  table-responsive table-striped table-bordered w-100 "-->
+            <table class="table table-responsive table-striped table-bordered w-100" >
+                <tr>
+                    <th style="white-space: nowrap;" class="table-header">Alerte</th>
+                    <th style="white-space: nowrap;" class="table-header">Région</th>
+                    <th style="white-space: nowrap;" class="table-header">Département</th>
+                    <th style="white-space: nowrap;" class="table-header">Commune</th>
+                    <th style="white-space: nowrap;" class="table-header">Localité</th>
+                    <th style="white-space: nowrap;" class="table-header">Acteur</th>
+                    <th style="white-space: nowrap;" class="table-header">Date début</th>
+                    <th style="white-space: nowrap;" class="table-header">Date fin</th>
+                    <th style="white-space: nowrap;" class="table-header">Détails</th>                   
+                    <th class="table-header">Mettre à jour</th> 
+                    <th>Action</th>                   
+                </tr>
+                {% for evaluation in evaluations  %} 
+                    <tr>
+                        <td class="table-header">{{evaluation.alerte}}</td>
+                        <td class="table-header">{{evaluation.alerte.localite.commune.departement.region}}</td>
+                        <td class="table-header">{{evaluation.alerte.localite.commune.departement}}</td>
+                        <td class="table-header">{{evaluation.alerte.localite.commune}}</td>
+                        <td class="table-header">{{evaluation.alerte.localite}}</td>
+                        <td class="table-header">{{evaluation.acteur}}</td>
+                        <td class="table-header">{{evaluation.date_debut}}</td>
+                        <td class="table-header">{{evaluation.date_fin}}</td>
+                        <td class="table-header"><a class="btn btn-sm btn-primary" href="{% url 'evaluation_detail' evaluation.id %}">Afficher détails</a></td>    
+                        
+                            {% if user.last_name|lower == evaluation.acteur|lower or user_has_meal_group %}
+                                <td><a class="btn btn-sm btn-info" href="{% url 'evaluation_update' evaluation.id %}">Modifier</a></td>
+                                <td><a class="btn btn-sm btn-danger" href="#" onclick="confirmerSuppressionEvaluation('{{evaluation.id}}')">Supprimer</a></td>
+                              {% else %}
+                                <td><a class="btn btn-sm btn-secondary disabled" href="{% url 'evaluation_update' evaluation.id %}">Modifier</a></td>
+                                <td><a class="btn btn-sm btn-danger disabled" href="#" onclick="confirmerSuppressionEvaluation('{{evaluation.id}}')">Supprimer</a></td>
+ 
+                              {% endif %}   
+                    </tr>
+                  
+                {% endfor %}
+
+            </table>
+           <!-- Pagination -->
+           <div class="row">
+            <div class="col-md-12">
+              {% if evaluations.has_other_pages %}
+                <ul class="pagination">
+                  {% if evaluations.has_previous %}
+                    <li class="page-item">
+                      <a href="?page={{ evaluation.previous_page_number }}&commune={{values.commune}}&region={{values.region}}&acteur={{values.acteur}}" class="page-link">&laquo;</a>
+                    </li>
+                  {% else %}
+                    <li class="page-item disabled">
+                      <a class="page-link">&laquo;</a>
+                    </li>
+                  {% endif %}
+                  {% for i in evaluations.paginator.page_range %}
+                    {% if evaluations.number == i %}
+                      <li class="page-item active">
+                        <a  class="page-link">{{i}}</a>
+                      </li>
+                    {% else %}
+                      <li class="page-item">
+                        <a href="?page={{i}}&commune={{values.commune}}&region={{values.region}}&acteur={{values.acteur}}" class="page-link">{{i}}</a>
+                      </li>
+                    {% endif %}
+                  {% endfor %}
+                  {% if evaluations.has_next %}
+                    <li class="page-item">
+                      <a href="?page={{ evaluations.next_page_number }}&commune={{values.commune}}&region={{values.region}}&acteur={{values.acteur}}" class="page-link">&raquo;</a>
+                    </li>
+                  {% else %}
+                    <li class="page-item disabled">
+                      <a class="page-link">&raquo;</a>
+                    </li>
+                  {% endif %}
+                </ul>
+              {% endif %}
+            </div>
+        <!-- Pagination -->
+        </div>
+
+    </div>
+
+    <!-- Javascript pour la confirmation . A mettre avant endblock  -->
+    <script>
+        // id = id a approuver
+        function confirmerSuppressionEvaluation(id) { 
+            if (confirm('Voulez-vous supprimer cette évaluation ?\nVous ne pourrez plus annuler cette action!')) {
+                window.location.href = '/activities/evaluation_delete/' + id
+            }
+        }
+
+        function telechargerEvaluation(idEvaluation) {
+          // document.getElementById('typefichier').value = idAlerte
+          $('#typefichier').val(idEvaluation)
+          document.getElementById('formtelechargerevaluation').submit()
+        }
+        $(function(){
+          $('#region').val($('#input1').val())
+          $('#commune').val($('#input2').val())
+          $('#acteur').val($('#input3').val())
+        })
+    </script>
+ 
+{% endblock content %}
+    

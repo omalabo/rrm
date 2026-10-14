@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+{% for alerte in alertes  %}
+<p>
+    <a href="{% url 'alerte_detail' alerte.id %}">{{alerte}}</a>
+</p>
+  
+{% endfor %}
+    
+{% endblock content %}
+    

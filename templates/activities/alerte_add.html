@@ -1,0 +1,296 @@
+{% extends "base.html" %}
+
+
+    
+
+    
+    {% block content %}
+    {% load static %}
+   
+    {% comment %} <link rel="stylesheet" href="{% static 'css/custum_white_on_blue_background.css' %}"> {% endcomment %}
+    <script src="http://www.openlayers.org/api/OpenLayers.js"></script>
+    <script src="{% static 'js/evalwizard.js' %}"></script>
+    <!--Oumarou labo 31 Mai ajouter p-1 rounded shadow-lg-->
+    <div class="text-center intro p-1 rounded shadow-lg" style="margin-left: 25%;margin-right: 25%;">
+        <h2>Enregistrer une alerte</h2>
+    </div>
+    <div class="container" style="background: #FFFF; width: 50%;" >
+      
+            <div style="margin:5%">
+                <form method="POST" id="alerteForm"  departement-url = '{% url "load_dep" %}' commune-url = '{% url "load_commune" %}' localite-url = '{% url "load_localites" %}' get-user-url = '{% url "get-user" %}' coordGPS-url = '{% url "get_coord_gps"%}'>
+                    {% load crispy_forms_tags %}
+                    {% csrf_token %}
+                    {{form|crispy}}
+                    <input type="submit"  value="Submit" class="btn btn-success">
+                </form>        
+                
+                
+            </div>
+            
+        </div>
+    </div>
+    
+    
+
+
+    <style >
+            .form-check-label{
+          margin-left: 3%;
+      }
+      </style>
+   
+ <script>
+     
+     $.datepicker.regional['fr'] = {
+                dateFormat: 'dd/mm/yy',
+                closeText: 'Fermer',
+                prevText: '&#x3c;Préc',
+                nextText: 'Suiv&#x3e;',
+                currentText: 'Aujourd\'hui',
+                monthNames: ['Janvier','Fevrier','Mars','Avril','Mai','Juin',
+                'Juillet','Aout','Septembre','Octobre','Novembre','Decembre'],
+                monthNamesShort: ['Jan','Fev','Mar','Avr','Mai','Jun',
+                'Jul','Aou','Sep','Oct','Nov','Dec'],
+                dayNames: ['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'],
+                dayNamesShort: ['Dim','Lun','Mar','Mer','Jeu','Ven','Sam'],
+                dayNamesMin: ['Di','Lu','Ma','Me','Je','Ve','Sa'],
+                weekHeader: 'Sm',
+                firstDay: 1,
+                isRTL: false,
+                showMonthAfterYear: false,
+                yearSuffix: '',
+                minDate: '-12M+0D',
+                maxDate: '+12M +0D',
+                numberOfMonths: 1,
+                showButtonPanel: true
+                };
+    $.datepicker.setDefaults($.datepicker.regional['fr']);
+        /* Include the jquery Ui here 
+            // DateTimePicker settings
+            $(function() {
+                    $( "#id_date_reception" ).datepicker({
+                    changeMonth: true,
+                    changeYear: true,
+                //  minDate: -20, maxDate: "+1M +10D" ,
+                    });
+
+                    $( "#id_date_confirmation" ).datepicker({
+                    changeMonth: true,
+                    changeYear: true,
+                //  minDate: -20, maxDate: "+1M +10D" ,
+                    });
+            });
+*/
+
+    $(document).ready(function(){
+     const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+      // Manage the drop down here:
+      $("#id_region").change(function(){
+          const region_id = $(this).val();
+          const url = $("#alerteForm").attr("departement-url");
+          $.ajax({
+              url:url,
+              type:"GET",
+              headers: {'X-CSRFToken': csrftoken},
+              data: {
+                  'region_id' : region_id
+              },
+              success:function(data){                 
+                  $("#id_departement").html(data);
+              }
+
+          });
+
+      });
+      
+      // Sélection des communes à partir du département
+        $("#id_departement").change(function(){
+            const dept_id = $(this).val();
+            const url = $("#alerteForm").attr("commune-url");
+            $.ajax({
+                url:url,
+                type:"GET",
+                headers: {'X-CSRFToken': csrftoken},
+                data: {
+                    'dept_id':dept_id
+                },
+                success:function(data){
+                    $("#id_commune").html(data);
+                }
+            });
+        });
+
+
+        // Sélection des localités
+        $("#id_commune").change(function(){
+            const commune_id = $(this).val();
+            const url = $("#alerteForm").attr("localite-url");
+            $.ajax({
+                url:url,
+                type:"GET",
+                headers: {'X-CSRFToken': csrftoken},
+                data: {
+                    'commune_id':commune_id
+                },
+                success:function(data){
+                    $("#id_localite").html(data);
+                }
+            });
+        });
+        
+        // We GET the gps coordinates of the locality to display map
+        $("#id_localite").change(function(){
+
+            const localite_id = $(this).val();
+            const url = $("#alerteForm").attr("coordGPS-url")
+            $.ajax({
+                url:url,
+                type:'GET',
+                dataType:'json',
+                headers: {'X-CSRFToken': csrftoken},
+                data: {
+                    'localite_id':localite_id
+                },
+                success: function(data){
+                  $("#mapdiv").insertAfter("#id_localite")
+                    console.log(data[2]);
+                   $("#mapdiv").html("")
+                   map = new OpenLayers.Map("mapdiv");
+                    map.addLayer(new OpenLayers.Layer.OSM());
+                    var longitude =data[1];
+                    var latitude = data[2];
+
+                    var lonLat = new OpenLayers.LonLat( longitude,latitude)
+                        .transform(
+                            new OpenLayers.Projection("EPSG:4326"), // transform from WGS 1984
+                            map.getProjectionObject() // to Spherical Mercator Projection
+                        );
+
+                    var zoom=13;
+
+                    var markers = new OpenLayers.Layer.Markers( "Markers" );
+                    map.addLayer(markers);
+
+                    markers.addMarker(new OpenLayers.Marker(lonLat));
+
+                    map.setCenter (lonLat, zoom)
+                                            }
+
+            })
+
+        });
+
+        // We get the current user and inialize the user field
+        $("#id_user").hide(),
+        $('type:submit').click(function(){
+            url =  $("#alerteForm").attr("get-user-url");
+            $.ajax({
+                url : url,
+                type: "GET",
+                dataType: 'json',
+                headers: {'X-CSRFToken': csrftoken},
+                success:function(data){
+                    $("#id_user").value = data[0].user_id
+
+                }
+
+            });
+            
+        });
+        
+
+
+        // Let's hide some fields which are dependants of the values of other fields
+        if ($('#id_type_choc').val()!=5){
+            $('label[for=id_autre_choc],input#id_autre_choc').hide();
+        }
+        else {
+            $('label[for=id_autre_choc],input#id_autre_choc').show();
+            }
+    
+        // Let's do the same for the field -- "Autre Source"
+        if($('#id_source').val() !='autre'){
+            $('label[for=id_autre_source],input#id_autre_source').hide();
+        }
+        else {
+            $('label[for=id_autre_source],input#id_autre_source').show();
+            
+            }
+                // Lors du chargement, cacher certains champs tant que l'alerte n'est pas confirmé.
+        if (!$('#id_confirmation_status').is(':checked')){
+            $('#div_id_date_confirmation').hide();
+            $('#div_id_confirmation_comment').hide();
+            $('#div_id_action').hide();
+            $('#div_id_user').hide();
+
+        }
+        else{
+            $('#div_id_date_confirmation').show();
+            $('#div_id_confirmation_comment').show();
+            $('#div_id_action').show();
+            $('#div_id_user').show();
+        }
+       
+              
+        // If the value of the "Type_choc" is changed
+        $('#id_type_choc').change(function(){
+           if ($('#id_type_choc').val()==5){
+            $('label[for=id_autre_choc],input#id_autre_choc').show();
+            $(this).closest('label').css("color", "red");
+           }
+           else {
+             
+               $('label[for=id_autre_choc],input#id_autre_choc').hide();
+           }
+           
+        });
+
+        // If the value of source changes
+        $('#id_source').change(function (){
+            
+            if ($('#id_source').val() == 'autre'){
+
+                $('label[for=id_autre_source],input#id_autre_source').show();
+                }
+            else {
+                $('label[for=id_autre_source],input#id_autre_source').hide();
+            }
+
+
+
+        });
+
+        // Alerte confirmation
+        $('#id_confirmation_status').click( function(){
+            if (!$(this).is(':checked')){
+            $('#div_id_date_confirmation').hide();
+            $('#div_id_confirmation_comment').hide();
+            $('#div_id_action').hide();
+            $('#div_id_user').hide();
+
+        }
+        else{
+            $('#div_id_date_confirmation').show();
+            $('#id_date_confirmation').attr('required','');
+            $('#id_date_confirmation').attr('data-error','Ce champ est réquis');
+
+            $('#div_id_confirmation_comment').show();
+            $('#div_id_confirmation_comment').attr('required','');
+            $('#div_id_confirmation_comment').attr('data-error','Ce champ est réquis');
+
+            $('#div_id_action').show();
+            $('#div_id_action').attr('required','');
+            $('#div_id_action').attr('data-error','Ce champ est réquis');
+
+            $('#div_id_user').show();
+        }
+        
+
+        });
+
+    });
+    
+  </script>
+        
+    {% endblock content %}
+    

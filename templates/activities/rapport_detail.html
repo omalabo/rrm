@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+<div class="jumbotron jumbotron-fluid" >
+ <div style="margin-left:  5% ">
+    <h2> Détails du rapport téléchargé par {{rapport.acteur}} à {{rapport.alerte.localite}}</h2>
+    <hr>
+    <h4><p>Région de :  {{rapport.alerte.localite.commune.departement.region}} </p>
+       <p> Département:  {{rapport.alerte.localite.commune.departement}} </p>
+       <p> Commune de:  {{rapport.alerte.localite.commune}} </p>
+    </h4>
+ </div>
+  
+</div>
+<!-- Autoriser la modification uniquement lorsque l'élement n'est pas validé-->
+<!--oummarou labo mb-2-->
+<a class="btn btn-secondary mb-2" style="margin-left: 5%" href=" {% url 'alerte_detail' rapport.alerte.id %}">Retour à l'alerte</a>
+{% if user.last_name|lower == rapport.acteur|lower  %} 
+ <a class="btn btn-primary" href="{% url 'update-rapport' rapport.id %}">Modifier</a>
+ {% endif %}
+         
+<div style="margin-left: 5% ;margin-right:10%" class="card" style="width:  18rem;">
+   <ul class="list-group-striped  list-group-flush" >
+         <li class="list-group-item">
+                 <p><strong>Titre</strong>: {{rapport.titre}}</p>
+         </li>
+         <li class="list-group-item">
+                <p><strong>Acteur ayant produit le rapport</strong>: {{rapport.acteur}}</p>
+        </li>
+         <li class="list-group-item">
+                 <p><strong>Date de publication</strong>: {{rapport.date_publication}}</p>
+         </li>
+         
+         </ul>
+ </div>
+ <!-- Autoriser la modification uniquement lorsque l'élement n'est pas validé-->
+ <!-- Oumarou Labo mt-2-->
+ <a class="btn btn-secondary mt-2" style="margin-left: 5%" href=" {% url 'pdf_list' %}">Retour à la liste des rapports</a>
+ {% if user.last_name|lower == rapport.acteur|lower %}
+  <a class="btn btn-primary" href="{% url 'update-rapport' rapport.id %}">Modifier</a>
+  {% endif %}
+ 
+  
+       
+
+
+{% endblock %}
+

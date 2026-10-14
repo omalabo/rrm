@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+
+
+{% block title %}
+{{ wizard.form.media }}
+{% endblock title %}
+    
+{% block stylesheet %}
+<style>
+    .formwizard{
+        margin: 60px auto;
+    }
+</style>
+    
+{% endblock stylesheet %}
+
+
+{% block content %}
+<!--Début du test-->
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/multistepform.css' %}">
+<script src="{% static 'js/evalwizard.js' %}"></script>
+<script src = "{% static 'js/load_alertes.js' %}"></script>
+<input type="hidden" id="step_field" value="{{wizard.steps.step1}}" />
+<script>
+    var form_number = $("#step_field").val();
+    console.log(parseInt(form_number)+1);
+</script> 
+<!-- fin du test-->
+        <div class="row">
+            <div class="col-md-6 col-md-offset-3">
+               
+                     
+                <p> {{wizard.steps.step1}} of {{wizard.steps.count}}</p>
+         
+                <form id ="myForm" action="" method="POST"  departement-url = '{% url "load_dep" %}' commune-url = '{% url "load_commune" %}' localite-url = '{% url "load_localites" %}' alertes-url = '{% url "load_alerte" %}'>{% csrf_token %}
+                        {% load crispy_forms_tags %}  
+                            <!-- progressbar -->
+                            <ul id="progressbar">
+                             
+                                    <li class="active">Infos Alerte</li>
+                                    <li>Généralités</li>
+                                    <li>ABNA</li>
+                                    <li>WASH</li>
+                                    <li>Protection</li>
+                                    <li>SECAL</li>
+                                    <li>Education</li>
+                                    <li>Santé</li>                                
+
+                            </ul>
+                    <fieldset>
+                            <h2 class="fs-title">{{form.title}}</h2>
+                            <h3 class="fs-subtitle">{{form.subtitle}}</h3>
+                        {{wizard.management_form}}
+                        {% if wizard.form.forms %}
+                            {{wizard.form.management_form}}
+                            {% for form in wizard.form.forms %}
+                                {crispy form}
+                            {% endfor %}
+                        {% else %}
+                            {{wizard.form | crispy}}
+                        <!--    {% for field in wizard.form %}
+                                <div class="form-group mb-2">
+                                    <label for="{{ field.id_for_label }}">{{ field.label }}</label><br>
+                                    {{field }}
+                                    <span class="message">{{field.errors}}</span>
+                                </div>
+                              
+                            {% endfor %}-->
+                        {% endif %}
+                        
+                    </fieldset>
+                    
+                    {% if wizard.steps.prev %}
+                    <button class="btn btn-secondary" name="wizard_goto_step" type="submit" value="{{ wizard.steps.first }}">First</button>
+                    <button class="btn btn-primary" name="wizard_goto_step" type="submit" value="{{ wizard.steps.prev }}">Previous</button>
+                        
+                    {% endif %}
+                    <input class="btn btn-success" type="submit" value="Submit"/>
+
+                </form>
+            
+           
+        </div>
+    </div>
+
+{% endblock content %}
+    
+    

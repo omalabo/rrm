@@ -1,0 +1,207 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+{% load static %}
+
+<style>
+  .table-responsive {
+    overflow-x: auto;
+}
+
+.table {
+    width: 100%;
+    table-layout: fixed;
+}
+
+.card.card-body.container {
+    width: 100%;
+    max-width: 75%;
+}
+
+.table-header {
+     /* Empêche le texte de passer à la ligne */
+    font-size: 0.9vw; /* Taille de la police */
+}
+
+</style>
+
+    <br>
+    <div class ="col-md">
+        <!--Oumarou labo 31 Mai ajouter p-1 rounded shadow-lg style="margin-left: 13%; margin-right: 13%;"-->
+        <div class="text-center intro p-1 rounded shadow-lg"  style="margin-left: 13%; margin-right: 13%;">
+            <h3>Suivi des alertes</h3> 
+        </div>
+ <!-- Filtering -->
+ <div class="card card-body container" style="width: 90%;">
+        
+    <form class="form-inline" action="{% url 'recherche_interventionall' %}" method="get">
+        {% csrf_token %}
+        <div class="form-group mb-2 mr-1">
+            <label for="input1" class="sr-only">Label 1</label>
+            <select class="form-control" id="input1" name="region"
+            onchange="document.getElementById('region').value = this.value">
+                <option value="">Toutes les régions</option>
+                {% for list_region in list_regions %}
+                <option value="{{list_region.id}}" {% if list_region.id == values.region|add:0 %}selected{% endif %}>{{list_region.get_name_display}}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group mx-sm-3 mb-2 mr-1">
+            <label for="input2" class="sr-only">Label 2</label>
+            <select class="form-control" id="input2" name="commune"
+            onchange="document.getElementById('commune').value = this.value">
+                <option value="">Toutes les communes</option>
+                {% for list_commune in list_communes %}
+                <option value="{{list_commune.id}}" {% if list_commune.id == values.commune|add:0 %}selected{% endif %}>{{list_commune.get_name_display}}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group mb-2 mr-3">
+            <label for="input3" class="sr-only">Label 3</label>
+            <select class="form-control form-control-sm" id="input3" name="acteur"
+            onchange="document.getElementById('acteur').value = this.value">
+                <option value="">Tous les acteurs</option>
+                {% for list_acteur in list_acteurs %}
+                <option value="{{list_acteur.id}}" {% if list_acteur.id == values.acteur %}selected{% endif %}>{{list_acteur.get_name_display}}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary mb-2 btn-sm">Recherche</button>
+        <a href="{% url 'list_interventionall'%}" class="btn btn-secondary mb-2 ml-2 btn-sm">Initialiser</a>
+      <!-- Telecharger -->
+      <div class="dropdown">
+        <button class="btn btn-success mb-2 ml-2 btn-sm dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Télécharger
+        </button>
+        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+          <!-- {% url 'telecharger_alerte_excel'%} -->
+          <a class="dropdown-item" href="#" onclick="telechargerInterventionAll(1)">Format EXCEL</a>
+          <a class="dropdown-item" href="#" onclick="telechargerInterventionAll(2)">Format CSV</a>
+        </div>
+      </div>
+        <!-- Telechager -->
+      </form>
+      <!-- Telechager 2-->
+      <form action="{%url 'telecharger_interventionall'%}" id="formtelechargerinterventionall" method="post" class="d-none">
+        {%csrf_token%}
+        <input type="text" name="region" id="region">
+        <input type="text" name="commune" id="commune">
+        <input type="text" name="acteur" id="acteur">
+        <input type="text" name="typefichier" id="typefichier">
+        <!-- Telechager 2-->
+     </form>
+</div>
+<!-- Filtering -->
+        <!-- <td><a class="btn btn-sm btn-primary" style="margin-bottom:0.2cm;color:white; font-size:15px;" href="{% url 'secal-add' %}">Enregistrer une intervention SECAL</a></td>     -->
+   
+        <!--Oumarou labo 31 Mai ajouter table-responsive" style="width: 100%; "-->
+        <div class="card card-body container table-responsive" style="width: 100%;">
+          <!--Oumarou labo 31 Mai ajouter  table-responsive table-striped table-bordered w-100 "-->
+            <table class="table table-responsive table-striped table-bordered w-100" >
+                <tr>
+                    <th style="white-space: nowrap;" class="table-header">Alerte</th>
+                    <th style="white-space: nowrap;" class="table-header">Région</th>
+                    <th style="white-space: nowrap;" class="table-header">Département</th>
+                    <th style="white-space: nowrap;" class="table-header">Commune</th>
+                    <th style="white-space: nowrap;" class="table-header">Date de confirmation de l'alerte</th>
+                    <th style="white-space: nowrap;" class="table-header">Date d'évaluation</th>
+                    <th style="white-space: nowrap;" class="table-header">Date de la 1ère intervention</th>
+                    <th style="white-space: nowrap;" class="table-header">Partenaire ayant fait la 1ère intervention</th>
+                    <!-- <th>Date fin</th>
+                    <th>Modalité Intervention</th> -->
+                    <th  class="table-header">#ménages ciblés NFI</th>     
+                    <th style="white-space: nowrap;" class="table-header">#ménages ciblés WASH</th>                
+                    <th style="white-space: nowrap;" class="table-header">#ménages ciblés ABRI</th>
+                    <th style="white-space: nowrap;" class="table-header">#ménages ciblés SECAL</th> 
+
+                </tr>
+                {% for interventionall in interventions  %}
+                
+                    <tr>
+                        <td class="table-header">{{interventionall.alerte}}</td>
+                        <td class="table-header">{{interventionall.region}}</td>
+                        <td class="table-header">{{interventionall.departement}}</td>
+                        <td class="table-header">{{interventionall.commune}}</td>
+                        <td class="table-header">{{interventionall.date_confirmation}}</td>
+                        <td class="table-header">{{interventionall.date_debut_eval}}</td>
+                        <td class="table-header">
+                            {% if interventionall.date_first_intervention == 'NaT' %}
+                                0
+                            {% else %}
+                                {{ interventionall.date_first_intervention }}
+                            {% endif %}
+                        </td>
+                        <td class="table-header">{{interventionall.acteur_first_intervention}}</td>
+                  
+                        <td class="table-header">{{interventionall.menage_cible_nfi}}</td>
+                        <td class="table-header">{{interventionall.menage_cible_wash}}</td>
+                        <td class="table-header">{{interventionall.menage_cible_abri}}</td>
+                        <td class="table-header">{{interventionall.menage_cible_secal}}</td>
+                      
+                    
+                    
+                    </tr>
+                {% endfor %}
+
+            </table>
+
+        <!-- Pagination -->
+           <div class="row">
+            <div class="col-md-12">
+              {% if interventions.has_other_pages %}
+                <ul class="pagination">
+                  {% if interventions.has_previous %}
+                    <li class="page-item">
+                      <a href="?page={{ interventionsecal.previous_page_number }}&commune={{values.commune}}&region={{values.region}}&acteur={{values.acteur}}" class="page-link">&laquo;</a>
+                    </li>
+                  {% else %}
+                    <li class="page-item disabled">
+                      <a class="page-link">&laquo;</a>
+                    </li>
+                  {% endif %}
+                  {% for i in interventions.paginator.page_range %}
+                    {% if interventions.number == i %}
+                      <li class="page-item active">
+                        <a  class="page-link">{{i}}</a>
+                      </li>
+                    {% else %}
+                      <li class="page-item">
+                        <a href="?page={{i}}&commune={{values.commune}}&region={{values.region}}&acteur={{values.acteur}}" class="page-link">{{i}}</a>
+                      </li>
+                    {% endif %}
+                  {% endfor %}
+                  {% if interventions.has_next %}
+                    <li class="page-item">
+                      <a href="?page={{ interventions.next_page_number }}&commune={{values.commune}}&region={{values.region}}&acteur={{values.acteur}}" class="page-link">&raquo;</a>
+                    </li>
+                  {% else %}
+                    <li class="page-item disabled">
+                      <a class="page-link">&raquo;</a>
+                    </li>
+                  {% endif %}
+                </ul>
+              {% endif %}
+            </div>
+        <!-- Pagination -->
+        </div>
+
+    </div>
+
+    <!-- Javascript pour la confirmation . A mettre avant endblock  -->
+    <script>
+        
+
+        function telechargerInterventionAll(idInterventionAll) {
+          // document.getElementById('typefichier').value = idAlerte
+          $('#typefichier').val(idInterventionAll)
+          document.getElementById('formtelechargerinterventionall').submit()
+        }
+        $(function(){
+          $('#region').val($('#input1').val())
+          $('#commune').val($('#input2').val())
+          $('#acteur').val($('#input3').val())
+        })
+    </script>
+{% endblock content %}
+    

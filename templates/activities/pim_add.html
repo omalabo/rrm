@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+
+    {% load static %}
+    
+        <link rel="stylesheet" href="{% static 'css/custum_white_on_blue_background.css' %}">
+        <script src="{% static 'js/datepicker_spec.js' %}"></script>
+
+        <div class="text-center intro" style="margin-left: 25%;margin-right: 25%;">
+            <h2>Enregistrer une PIM</h2>
+        </div>
+        <div class="container" style="background: #FFFF; width: 50%;" >
+          
+                <div style="margin:5%">
+                    <form enctype="multipart/form-data" method="POST">
+                         {% load crispy_forms_tags %}
+                        {% csrf_token %}
+                        {{form|crispy}}
+                        <input type="submit" value="Submit" class="btn btn-success">
+                    </form>               
+                </div>
+                
+            </div>
+        </div>
+    
+{% endblock content %}
+    

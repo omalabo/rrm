@@ -1,0 +1,342 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+<div class="jumbotron jumbotron-fluid" >
+ <div style="margin-left:  5% ">
+    <h2> Détails de l'évaluation effectuée par {{evaluation.acteur}} à {{evaluation.alerte.localite}}</h2>
+    <hr>
+    <h4><p>Région de :  {{evaluation.alerte.localite.commune.departement.region}} </p>
+       <p> Département:  {{evaluation.alerte.localite.commune.departement}} </p>
+       <p> Commune de:  {{evaluation.alerte.localite.commune}} </p>
+       {% if evaluation.user_update %}
+          <p>Dernière personne ayant apporté une modification: {{evaluation.user_update.last_name}}</p>
+       
+       {% endif %}
+
+
+    </h4>
+ </div>
+    
+</div>
+
+
+<!-- Autoriser la modification uniquement lorsque l'élement n'est pas validé-->
+<!--oummarou labo mb-2-->
+<a class="btn btn-secondary mb-2" style="margin-left: 5%" href=" {% url 'alerte_detail' evaluation.alerte.id  %}">Retour à l'alerte</a>
+{% if evaluation.validation == 1 and user.last_name|lower == evaluation.acteur|lower%}
+ <a class="btn btn-success" href="{% url 'eval-edit' evaluation.id %}">Modifier</a>
+ {% endif %}
+
+<div style="margin-left: 5%" class="card" style="width:  18rem;">
+  <ul class="list-group-striped  list-group-flush" > 
+    <li class="list-group-item">
+            <p><strong>Date de confirmation de l'alerte</strong>: {{evaluation.alerte.date_confirmation}}</p>
+    </li>
+    <li class="list-group-item">
+            <p><strong>Date de début de l'évaluation: </strong> {{evaluation.date_debut}}</p>
+    </li>
+    <li class="list-group-item">
+            <p><strong>Date de fin de l'évaluation: </strong> {{evaluation.date_fin}}</p>
+    </li>
+   <li class="list-group-item">
+        <p><strong>Type d'évaluation:  </strong>{{ evaluation.get_type_eval_display}}</p>
+   </li>
+   <li class="list-group-item">
+        <p><strong>Date de publication du rapport: </strong> {{evaluation.date_publication_rapport}}</p>
+   </li>  
+  <li class="list-group-item">
+     <p><strong>Evaluation conjointe ?: </strong> 
+     {% if evaluation.eval_conjointe %}
+         Oui
+         {% else %}
+         Non
+     {% endif %}
+          </p>
+  </li>
+  
+  {% if evaluation.secteur_nfi %}
+    <li class="list-group-item">
+            <p><strong>Secteur NFI: </strong> Oui</p>
+    </li>
+    <ul>
+        <li class="list-group-item">
+            <strong>Score NFI:  </strong> {{evaluation.n_scorenfi}}
+        </li>
+        
+
+            
+        
+        
+        
+    </ul>
+
+  {% endif %}
+      
+   
+   {% if evaluation.secteur_abri %}
+   <li class="list-group-item">
+        <p><strong>Secteur Abri: </strong> Oui</p>
+   </li>
+   <ul>
+        <li class="list-group-item">
+                <strong><span style="color: red">% ménages dans un abri en mauvais état</span>:  </strong> {{evaluation.n_pctabrimauvaisetat}}
+        </li>
+        <li class="list-group-item">
+                <strong>% des ménages hébergeant au moins une autre ménage:  </strong> {{evaluation.a_pctmenagehebergeant}}
+        </li>
+
+        <li class="list-group-item">
+                <strong>Nombre moyen de personnes hébergées:  </strong> {{evaluation.a_moypersonnehebergee}}
+        </li>
+        <li class="list-group-item">
+            <strong>Nombre moyen de m2 par personne:  </strong> {{evaluation.a_moym2parpersonne}}
+        </li>
+   </ul>
+
+   {% endif %}
+       
+
+   
+   {% if evaluation.secteur_wash %}
+   <li class="list-group-item">
+        <p><strong>Secteur WASH: </strong> Oui</p>
+         
+          <ul>
+                <li class="list-group-item">
+                        <p><strong><span style="color: blue">Taux de DIARRHEE chez les enfants < 5 ans</span>: </strong> {{evaluation.wa_tauxdiarrheeu5}}</p>
+                </li>
+                <li class="list-group-item">
+                        <p><strong><span style="color: blue"><span style="color: blue">% Menages ayant acces et utilisant des LATRINES hygieniques</span>: </strong> {{evaluation.wa_pctutilisationlatrine}}</p>
+                </li>
+                <li class="list-group-item">
+                        <p><strong><span style="color: blue">% ménages ayant accès à des LATRINES</span>: </strong> {{evaluation.wa_pctacceslatrine}}</p>
+                </li>
+                <li class="list-group-item">
+                        <p><strong><span style="color: blue">% ménages ayant du SAVON ou de la cendre pour le lavage des mains</span>: </strong> {{evaluation.wa_pctsavon}}</p>
+                </li>
+                <li class="list-group-item">
+                        <p><strong><span style="color: blue">% ménages qui citent au moins 3 MOMENTS CLES pour le lavage des mains</span>: </strong> {{evaluation.wa_pctmomentcles}}</p>
+                </li>
+                <li class="list-group-item">
+                        <p><strong><span style="color: blue">% ménages qui disent se laver les mains avec du savon ou de la cendre</span>: </strong> {{evaluation.wa_pctlavagemains}}</p>
+                </li>
+                <li class="list-group-item">
+                        <p><strong><span style='color: blue'>% ménages qui utilise une source d'EAU de boisson améliorée</span>: </strong> {{evaluation.wa_pctutiliseeauamelioree}}</p>
+                </li>
+                <li class="list-group-item">
+                        <p><strong><span style="color: blue">Nombre moyen de litres d'EAU POTABLE utilisés par les ménages par jour.</span>: </strong> {{evaluation.wa_litreeaumenageparjour}}</p>
+                </li>
+                <li class="list-group-item">
+                        <p><strong><span style="color: blue">% ménages ayant un accès facile en distance/temps  à une ressource d’EAU PROTEGEE</span>: </strong> {{evaluation.wa_pctacceseauprotege}}</p>
+                </li>
+         </ul>
+ 
+   {% endif %}
+
+   {% if evaluation.secteur_wash %}
+   <li class="list-group-item">
+        <p><strong>Secteur Protection: </strong> Oui</p> </li>
+        <ul>
+            <li class="list-group-item">
+             <p><strong>Attaque/Occupation des Ecoles: </strong> {{evaluation.p_attaqueecole}}</p>
+            </li>
+            <li class="list-group-item">
+                    <p><strong>Attaque/Occupation des Structures de Sante: </strong> {{evaluation.p_attaquecentresante}}</p>
+            </li>
+            <li class="list-group-item">
+                    <p><strong>Nombre d'enfants non-accompagnés: </strong> {{evaluation.p_ena}}</p>
+            </li>
+            <li class="list-group-item">
+                    <p><strong>Nombre d'Enfants séparés: </strong> {{evaluation.p_es}}</p>
+            </li>
+            <li class="list-group-item">
+                    <p><strong>Nombre d'Enfants orphelins: </strong> {{evaluation.p_orphelin}}</p>
+            </li>
+            <li class="list-group-item">
+                    <p><strong>Nombre d'Enfants associés aux forces et groupes armés (EAFGA): </strong> {{evaluation.p_eafga}}</p>
+            </li>
+            <li class="list-group-item">
+                    <p><strong>Nombre  de cas  de violences sexuelles: </strong> {{evaluation.p_vs}}</p>
+            </li>
+            <li class="list-group-item">
+                    <p><strong>Nombre  de cas  de viols: </strong> {{evaluation.p_viol}}</p>
+            </li>
+            <li class="list-group-item">
+                    <p><strong>Nombre  de Cas viol enfants: </strong> {{evaluation.p_violenfant}}</p>
+            </li>
+            <li class="list-group-item">
+                    <p><strong>Nombre  de Cas Recrutement forcé: </strong> {{evaluation.p_recrutement}}</p>
+            </li>
+            <li class="list-group-item">
+                    <p><strong>Nombre  de Cas Recrutement enfants: </strong> {{evaluation.p_recrutementenfant}}</p>
+            </li>
+            <li class="list-group-item">
+                    <p><strong>Nombre  de Cas d'enlevements: </strong> {{evaluation.p_enlevement}}</p>
+            </li>
+            <li class="list-group-item">
+                    <p><strong>Nombre  de Cas Enlèvement enfants: </strong> {{evaluation.p_enlevementenfant}}</p>
+            </li>
+       
+            '
+        </ul>
+    
+{% endif %}
+    
+   
+ 
+
+{% if evaluation.secteur_education %}
+   <li class="list-group-item">
+        <p><strong>Secteur Education: </strong> Oui</p>
+   </li>
+   <ul>
+        <li class="list-group-item">
+                <p><strong>% Enfants de 7-12 ans deplaces non scolarises: </strong> {{evaluation.pctenfdeplacesnonscolarises}}</p>
+        </li>
+        <li class="list-group-item">
+                <p><strong>% Enfants 7-12 ans Communaute accueil non scolarises: </strong> {{evaluation.pctenfcomnonscolarises}}</p>
+        </li>
+        <li class="list-group-item">
+                <p><strong>% Ecole fonctionnelle: </strong> {{evaluation.pctecolefonctionnel}}</p>
+        </li>
+        <li class="list-group-item">
+                <p><strong>Proportion élèves / salle de classe: </strong> {{evaluation.eleveparsalle}}</p>
+        </li>
+        <li class="list-group-item">
+                <p><strong>Proportion élèves / einsegnant: </strong> {{evaluation.eleveparenseignant}}</p>
+        </li>
+   </ul>
+{% endif %}
+
+
+
+{% if  evaluation.secteur_secal  %}
+    <li class="list-group-item">
+        <p><strong>Secteur Sécurité alimentaire: </strong> Oui</p>
+    </li>
+    <ul>
+            <li class="list-group-item">
+                    <p><strong>Score moyen consommation alimentaire: </strong> {{evaluation.sa_sca}}</p>
+            </li>
+            <li class="list-group-item">
+                    <p><strong>% Ménages par ayant une consommation alimentaire pauvre: </strong> {{evaluation.sa_pctscapauvre}}</p>
+            </li>
+            <li class="list-group-item">
+                    <p><strong>Score moyen de diversite alimentaire: </strong> {{evaluation.sa_sda}}</p>
+            </li>
+            <li class="list-group-item">
+                    <p><strong>Indice simplifie des strategies de survie: </strong> {{evaluation.sa_isss}}</p>
+            </li>
+            <li class="list-group-item">
+                    <p><strong>% Menage par sources de revenus - Vente produits agricoles: </strong> {{evaluation.sa_pctventeagricole}}</p>
+            </li>
+            <li class="list-group-item">
+                    <p><strong>% Menage par sources de revenus - Vente produits animaux: </strong> {{evaluation.sa_pctventeanimaux}}</p>
+            </li>
+            <li class="list-group-item">
+                    <p><strong>% Menage par sources de revenus - Vente produits de pêche: </strong> {{evaluation.sa_pctventepeche}}</p>
+            </li>
+            <li class="list-group-item">
+                    <p><strong>% Menage par sources de revenus - Vente de charbon, bois de chauffe: </strong> {{evaluation.sa_pctventecharbon}}</p>
+            </li>
+            <li class="list-group-item">
+                    <p><strong>% Menage par sources de revenus - Petit commerce non agricole: </strong> {{evaluation.sa_pctpetitcommerce}}</p>
+            </li>
+            <li class="list-group-item">
+                    <p><strong>% Menage par sources de revenus - Travail journalier: </strong> {{evaluation.sa_pctjournalier}}</p>
+            </li>
+            <li class="list-group-item">
+                    <p><strong>% Menage par sources de revenus - Artisanat: </strong> {{evaluation.sa_pctartisanat}}</p>
+            </li>
+            <li class="list-group-item">
+                    <p><strong>% Menage par sources de revenus - Revenus Locatif – terre: </strong> {{evaluation.sa_pctlocatif}}</p>
+            </li>
+            <li class="list-group-item">
+                    <p><strong>% Menage par sources de revenus - Transfert d'argent de l'exterieur: </strong> {{evaluation.sa_pcttransfertargent}}</p>
+            </li>
+            <li class="list-group-item">
+                    <p><strong>% Menage par sources de revenus - Autres: </strong> {{evaluation.sa_pctautre}}</p>
+            </li>
+    </ul>
+    
+{% endif %}
+    
+
+
+{% if evaluation.secteur_sante %}
+    <li class="list-group-item">
+        <p><strong>Secteur Santé: </strong>Oui</p>
+    </li>
+    <ul>
+            <li class="list-group-item">
+                    <p><strong>Taux de mortalité des moins de 5 ans: </strong>{{evaluation.mortaliteu5}}</p>
+            </li>
+            <li class="list-group-item">
+                    <p><strong>Taux brut de mortalité: </strong>{{evaluation.mortalite}}</p>
+            </li>
+            <li class="list-group-item">
+                    <p><strong>Couverture vaccinale Rougeole - Enfants < 1 an: </strong>{{evaluation.rougeole}}</p>
+            </li>
+            <li class="list-group-item">
+                    <p><strong>Couverture vaccinale DTC3 - Enfants < 1 an: </strong>{{evaluation.dtc3}}</p>
+            </li>
+            <li class="list-group-item">
+                    <p><strong>Couverture vaccinale POLIO - Enfants < 1 an: </strong>{{evaluation.polio}}</p>
+            </li>
+            <li class="list-group-item">
+                    <p><strong>Taux d’utilisation des services curatifs - Général: </strong>{{evaluation.servicescurratifs}}</p>
+            </li>
+            <li class="list-group-item">
+                    <p><strong>Enfants <5 ans - Taux d’utilisation des services curatifs: </strong>{{evaluation.servicescurratifsu5}}</p>
+            </li>
+            <li class="list-group-item">
+                    <p><strong>Taux de consultations dans les derniers 3 mois: </strong>{{evaluation.consulations}}</p>
+            </li>
+            <li class="list-group-item">
+                    <p><strong>Nouveaux cas de Diarrhée pour 1000 pers/mois - Général: </strong>{{evaluation.diarrhee}}</p>
+            </li>
+            <li class="list-group-item">
+                    <p><strong>Nouveaux cas de Paludisme pour 1000 pers/mois - Général: </strong>{{evaluation.paludisme}}</p>
+            </li>
+            <li class="list-group-item">
+                    <p><strong>Nouveaux cas de IRA pour 1000 pers/mois - Général: </strong>{{evaluation.ira}}</p>
+            </li>
+            <li class="list-group-item">
+                    <p><strong>Nouveaux cas de Diarrhée pour 1000 pers/mois - Enfants <5 ans: </strong>{{evaluation.diarrheeu5}}</p>
+            </li>
+            <li class="list-group-item">
+                    <p><strong>Nouveaux cas de Paludisme pour 1000 pers/mois - Enfants <5 ans: </strong>{{evaluation.paludismeu5}}</p>
+            </li>
+            <li class="list-group-item">
+                    <p><strong>Nouveaux cas de IRA pour 1000 pers/mois - Enfants <5 ans: </strong>{{evaluation.irau5}}</p>
+            </li>
+
+           
+    </ul>
+   
+           
+        
+{% endif %}
+    
+
+   
+   
+   
+
+
+
+
+</ul>
+
+</div>
+
+<!-- Autoriser la modification uniquement lorsque l'élement n'est pas validé-->
+<!--oummarou labo mt-2-->
+<a class="btn btn-secondary mt-2" style="margin-left: 5%" href=" {% url 'list_evaluation' %}">Retour à la liste des évaluations</a>
+{% if evaluation.validation == 1 and user.last_name|lower == evaluation.acteur|lower%}
+ <a class="btn btn-success" href="{% url 'eval-edit' evaluation.id %}">Modifier</a>
+ {% endif %}
+
+    
+{% endblock content %}

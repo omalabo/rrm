@@ -1,0 +1,204 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% load static %}
+
+<script src="http://www.openlayers.org/api/OpenLayers.js"></script>
+<script src="{% static 'js/evalwizard.js' %}"></script>
+
+<!-- Titre de la page -->
+<div class="text-center intro p-1 rounded shadow-lg" style="margin-left: 25%; margin-right: 25%;">
+    <h2>Mettre à jour l'alerte</h2>
+</div>
+
+<!-- Formulaire de mise à jour -->
+<div class="container" style="background: #FFFF; width: 50%;">
+    <div style="margin: 5%">
+        <form method="POST" id="alerteForm"
+            departement-url="{% url 'load_dep' %}"
+            commune-url="{% url 'load_commune' %}"
+            localite-url="{% url 'load_localites' %}"
+            get-user-url="{% url 'get-user' %}"
+            coordGPS-url="{% url 'get_coord_gps' %}">
+            {% load crispy_forms_tags %}
+            {% csrf_token %}
+            {{ form|crispy }}
+            <input type="submit" value="Mettre à jour" class="btn btn-success">
+        </form>
+    </div>
+</div>
+
+<style>
+    .form-check-label {
+        margin-left: 3%;
+    }
+</style>
+
+<script>
+    $(document).ready(function() {
+        const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+        // Gérer la sélection du département en fonction de la région
+        $("#id_region").change(function() {
+            const region_id = $(this).val();
+            const url = $("#alerteForm").attr("departement-url");
+            $.ajax({
+                url: url,
+                type: "GET",
+                headers: { 'X-CSRFToken': csrftoken },
+                data: { 'region_id': region_id },
+                success: function(data) {
+                    $("#id_departement").html(data);
+                }
+            });
+        });
+
+        // Sélection des communes à partir du département
+        $("#id_departement").change(function() {
+            const dept_id = $(this).val();
+            const url = $("#alerteForm").attr("commune-url");
+            $.ajax({
+                url: url,
+                type: "GET",
+                headers: { 'X-CSRFToken': csrftoken },
+                data: { 'dept_id': dept_id },
+                success: function(data) {
+                    $("#id_commune").html(data);
+                }
+            });
+        });
+
+        // Sélection des localités
+        $("#id_commune").change(function() {
+            const commune_id = $(this).val();
+            const url = $("#alerteForm").attr("localite-url");
+            $.ajax({
+                url: url,
+                type: "GET",
+                headers: { 'X-CSRFToken': csrftoken },
+                data: { 'commune_id': commune_id },
+                success: function(data) {
+                    $("#id_localite").html(data);
+                }
+            });
+        });
+
+        // Récupérer les coordonnées GPS de la localité et afficher la carte
+        $("#id_localite").change(function() {
+            const localite_id = $(this).val();
+            const url = $("#alerteForm").attr("coordGPS-url");
+            $.ajax({
+                url: url,
+                type: 'GET',
+                dataType: 'json',
+                headers: { 'X-CSRFToken': csrftoken },
+                data: { 'localite_id': localite_id },
+                success: function(data) {
+                    $("#mapdiv").insertAfter("#id_localite");
+                    console.log(data[2]);
+                    $("#mapdiv").html("");
+                    var map = new OpenLayers.Map("mapdiv");
+                    map.addLayer(new OpenLayers.Layer.OSM());
+                    var longitude = data[1];
+                    var latitude = data[2];
+
+                    var lonLat = new OpenLayers.LonLat(longitude, latitude)
+                        .transform(
+                            new OpenLayers.Projection("EPSG:4326"), // transformation de WGS 1984
+                            map.getProjectionObject() // projection Mercator sphérique
+                        );
+
+                    var zoom = 13;
+                    var markers = new OpenLayers.Layer.Markers("Markers");
+                    map.addLayer(markers);
+                    markers.addMarker(new OpenLayers.Marker(lonLat));
+                    map.setCenter(lonLat, zoom);
+                }
+            });
+        });
+
+        // Récupérer l'utilisateur actuel et initialiser le champ utilisateur
+        $("#id_user").hide(),
+        $('type:submit').click(function() {
+            const url = $("#alerteForm").attr("get-user-url");
+            $.ajax({
+                url: url,
+                type: "GET",
+                dataType: 'json',
+                headers: { 'X-CSRFToken': csrftoken },
+                success: function(data) {
+                    $("#id_user").val(data[0].user_id);
+                }
+            });
+        });
+
+        // Masquer certains champs selon les valeurs d'autres champs
+        if ($('#id_type_choc').val() != 5) {
+            $('label[for=id_autre_choc], input#id_autre_choc').hide();
+        } else {
+            $('label[for=id_autre_choc], input#id_autre_choc').show();
+        }
+
+        if ($('#id_source').val() != 'autre') {
+            $('label[for=id_autre_source], input#id_autre_source').hide();
+        } else {
+            $('label[for=id_autre_source], input#id_autre_source').show();
+        }
+
+        // Affichage conditionnel de la date de confirmation et autres champs lors de l'activation de la confirmation
+        if (!$('#id_confirmation_status').is(':checked')) {
+            $('#div_id_date_confirmation').hide();
+            $('#div_id_confirmation_comment').hide();
+            $('#div_id_action').hide();
+            $('#div_id_user').hide();
+        } else {
+            $('#div_id_date_confirmation').show();
+            $('#div_id_confirmation_comment').show();
+            $('#div_id_action').show();
+            $('#div_id_user').show();
+        }
+
+        // Gestion du changement de valeur du type de choc
+        $('#id_type_choc').change(function() {
+            if ($('#id_type_choc').val() == 5) {
+                $('label[for=id_autre_choc], input#id_autre_choc').show();
+                $(this).closest('label').css("color", "red");
+            } else {
+                $('label[for=id_autre_choc], input#id_autre_choc').hide();
+            }
+        });
+
+        // Gestion du changement de la source
+        $('#id_source').change(function() {
+            if ($('#id_source').val() == 'autre') {
+                $('label[for=id_autre_source], input#id_autre_source').show();
+            } else {
+                $('label[for=id_autre_source], input#id_autre_source').hide();
+            }
+        });
+
+        // Mise à jour de la visibilité de la date de confirmation si la case de confirmation est activée
+        $('#id_confirmation_status').click(function() {
+            if (!$(this).is(':checked')) {
+                $('#div_id_date_confirmation').hide();
+                $('#div_id_confirmation_comment').hide();
+                $('#div_id_action').hide();
+                $('#div_id_user').hide();
+            } else {
+                $('#div_id_date_confirmation').show();
+                $('#id_date_confirmation').attr('required', '');
+                $('#id_date_confirmation').attr('data-error', 'Ce champ est réquis');
+                $('#div_id_confirmation_comment').show();
+                $('#div_id_confirmation_comment').attr('required', '');
+                $('#div_id_confirmation_comment').attr('data-error', 'Ce champ est réquis');
+                $('#div_id_action').show();
+                $('#div_id_action').attr('required', '');
+                $('#div_id_action').attr('data-error', 'Ce champ est réquis');
+                $('#div_id_user').show();
+            }
+        });
+
+    });
+</script>
+
+{% endblock content %}

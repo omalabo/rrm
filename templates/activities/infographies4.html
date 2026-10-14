@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carte Communale</title>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.11.3/css/jquery.dataTables.css">
+</head>
+<body>
+    {% extends "base.html" %}
+    {% load static %}
+    {% load plotly_dash %}
+    {% block content %}
+    <div class="container-fluid">
+        <div class="page-loader">
+            <div class="loader">Chargement...</div>
+        </div>
+
+        <div class="jumbotron jumbotron-fluid">
+			<div style="margin-left: 5%; text-align: center;">
+			   <h3><strong>Cartographie des alertes</strong></h3>
+			</div>
+		 </div>
+        <div id="content" style="display: none;">
+            <div id="container" class="shadow-lg rounded"></div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.11.3/js/jquery.dataTables.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/papaparse@5.3.0/papaparse.min.js"></script>
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/maps/modules/map.js"></script>
+    <script src="https://code.highcharts.com/modules/exporting.js"></script>
+    <script src="https://code.highcharts.com/modules/export-data.js"></script>
+    <script src="https://code.highcharts.com/modules/accessibility.js"></script>
+    <script src="https://code.highcharts.com/dashboards/datagrid.js"></script>
+    <script src="https://code.highcharts.com/dashboards/dashboards.js"></script>
+    <script src="https://code.highcharts.com/dashboards/modules/layout.js"></script>
+    <script src="https://code.highcharts.com/highcharts-more.js"></script>
+    <script src="https://code.highcharts.com/modules/offline-exporting.js"></script>
+    <script src="https://code.highcharts.com/modules/marker-clusters.js"></script>
+
+    <style>
+        .loader {
+            text-align: center;
+            padding: 50px;
+            font-size: 1.2em;
+        }
+
+        .page-loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+
+        .page-loader .loader {
+            font-size: 2em;
+        }
+
+        .select2-container {
+            width: 100% !important;
+            margin-bottom: 5px;
+        }
+
+		/* New style to make the container take full height */
+        #container {
+            height: 70vh; /* Full height of the viewport */
+			
+        }
+		.jumbotron {
+	   margin-bottom: 0;
+	   padding-top: 7px;
+	   padding-bottom: 7px;
+		}
+    </style>
+
+    <script>
+        $(document).ready(async function () {
+            try {
+                const response = await fetch("{% static 'data/region.geojson' %}");
+
+                if (!response.ok) {
+                    throw new Error('Network response was not ok ' + response.statusText);
+                }
+                const communeGeoJson = await response.json();
+
+
+				const csvToJson = async (csvFilePath) => {
+                    const response = await fetch(csvFilePath);
+                    const csvText = await response.text();
+                    return new Promise((resolve, reject) => {
+                        Papa.parse(csvText, {
+                            header: true,
+                            dynamicTyping: true,
+                            complete: (results) => {
+                                resolve(results.data);
+                            },
+                            error: (error) => {
+                                reject(error);
+                            }
+                        });
+                    });
+                };
+
+
+
+				
+				const al = await csvToJson("{% static 'data/alertes.csv' %}");
+                const ev = await csvToJson("{% static 'data/evaluations.csv' %}");
+                const nfi = await csvToJson("{% static 'data/interventionnfis.csv' %}");
+                const abri = await csvToJson("{% static 'data/interventionabris.csv' %}");
+                const protection = await csvToJson("{% static 'data/interventionprotections.csv' %}");
+                const wash = await csvToJson("{% static 'data/interventionwashs.csv' %}");
+                const secal = await csvToJson("{% static 'data/interventionsecals.csv' %}");
+                const coor = await csvToJson("{% static 'data/localites.csv' %}");
+				
+
+
+				
+
+
+
+				const monthNameMapping = {
+                    "janvier": "Janvier",
+                    "février": "Février",
+                    "mars": "Mars",
+                    "avril": "Avril",
+                    "mai": "Mai",
+                    "juin": "Juin",
+                    "juillet": "Juillet",
+                    "août": "Août",
+                    "septembre": "Septembre",
+                    "octobre": "Octobre",
+                    "novembre": "Novembre",
+                    "décembre": "Décembre"
+                };
+
+                const mapMonthName = (month) => {
+                    return monthNameMapping[month.toLowerCase()] || month;
+                };
+
+                // Créer le code alerte
+                al.forEach(row => {
+                    if (row.date_reception) {
+                        const date = row.date_reception.replace(/-/g, '_');
+                        row.date = date;
+                        row.alerte = `${row.region}-${row.localite}-${row.acteur}-${row.date}`.toLowerCase();
+                    }
+                });
+
+                const alertes = al.map(row => ({
+                    alerte: row.alerte,
+                    region: row.region,
+                    departement: row.departement,
+                    commune: row.commune,
+                    localite: row.localite,
+                    date_reception: row.date_reception,
+                    confirmation_status: row.confirmation_status,
+                    type_choc: row.type_choc
+                }));
+
+                ev.forEach(row => row.evaluation = 1);
+                const eval = ev.map(row => ({
+                    alerte: row.alerte,
+                    evaluation: row.evaluation
+                }));
+
+                nfi.forEach(row => row.nfi = 1);
+                const nfis = nfi.map(row => ({
+                    alerte: row.alerte,
+                    nfi: row.nfi
+                }));
+
+                abri.forEach(row => row.abri = 1);
+                const abris = abri.map(row => ({
+                    alerte: row.alerte,
+                    abri: row.abri
+                }));
+
+                protection.forEach(row => row.protection = 1);
+                const protections = protection.map(row => ({
+                    alerte: row.alerte,
+                    protection: row.protection
+                }));
+
+                wash.forEach(row => row.wash = 1);
+                const washs = wash.map(row => ({
+                    alerte: row.alerte,
+                    wash: row.wash
+                }));
+
+                secal.forEach(row => row.secal = 1);
+                const secals = secal.map(row => ({
+                    alerte: row.alerte,
+                    secal: row.secal
+                }));
+
+                const coord = coor.map(row => ({
+                    localite: row.NomLocalite,
+                    LONGDEGRE: row.LONGDEGRE,
+                    LONGMINUTE: row.LONGMINUTE,
+                    LONGFRACTMINUTE: row.LONGFRACTMINUTE,
+                    LATDEGRE: row.LATDEGRE,
+                    LATMINUTE: row.LATMINUTE,
+                    LATFRACTMINUTE: row.LATFRACTMINUTE
+                }));
+
+
+                const computeCoordinates = (coords) => {
+                    return coords.map(row => {
+                        const long = row.LONGDEGRE + row.LONGMINUTE / 60 + row.LONGFRACTMINUTE / (60 * 1000);
+                        const lat = row.LATDEGRE + row.LATMINUTE / 60 + row.LATFRACTMINUTE / (60 * 1000);
+                        return {
+                            ...row,
+                            long: long,
+                            lat: lat
+                        };
+                    });
+                };
+
+                const coordinates = computeCoordinates(coord).map(row => ({
+                    localite: row.localite,
+                    long: row.long,
+                    lat: row.lat
+                }));
+
+                const mergeData = (data1, data2, key) => {
+                    return data1.map(item => {
+                        const match = data2.find(d => d[key] === item[key]) || {};
+                        return { ...item, ...match };
+                    });
+                };
+
+                let data = mergeData(alertes, eval, 'alerte');
+                data = mergeData(data, nfis, 'alerte');
+                data = mergeData(data, abris, 'alerte');
+                data = mergeData(data, protections, 'alerte');
+                data = mergeData(data, washs, 'alerte');
+                data = mergeData(data, secals, 'alerte');
+                data = mergeData(data, coordinates, 'localite');
+
+                data = data.map(row => ({
+                    ...row,
+                    evaluation: row.evaluation || 0,
+                    nfi: row.nfi || 0,
+                    abri: row.abri || 0,
+                    protection: row.protection || 0,
+                    wash: row.wash || 0,
+                    secal: row.secal || 0
+                }));
+
+                data = data.map(row => ({
+                    ...row,
+                    etapes: row.evaluation === 0 && row.nfi === 0 && row.abri === 0 && row.protection === 0 ? 'alerte' :
+                            row.evaluation === 1 && row.nfi === 0 && row.abri === 0 && row.protection === 0 ? 'evaluation' :
+                            row.evaluation === 1 && (row.nfi === 1 || row.abri === 1 || row.protection === 1 || row.wash === 1 || row.secal === 1) ? 'intervention' : ''
+                }));
+
+
+                data = data.map(row => {
+                    if (row.date_reception) {
+                        return {
+                            ...row,
+                            date1: moment(row.date_reception, 'YYYY-MM-DD'),
+                            mois: mapMonthName(moment(row.date_reception, 'YYYY-MM-DD').format('MMMM')),
+                            annee: moment(row.date_reception, 'YYYY-MM-DD').format('YYYY')
+                        };
+                    } else {
+                        return row;
+                    }
+                });
+
+                data = data.map(row => ({
+                    ...row,
+                    region: row.region ? row.region.replace("TillabÃ©ri", "Tillabéri") : row.region
+                }));
+
+                const uniqueMonths = [...new Set(data.map(row => row.mois))].sort((a, b) => {
+                    return new Date(`01 ${a} 2020`) - new Date(`01 ${b} 2020`);
+                });
+
+                const years = [...new Set(data.map(row => row.annee))];
+                const regions = [...new Set(data.map(row => row.region))].sort();
+				
+                
+                const year = '2023';  // Exemple d'année
+                const month = 'Mars';  // Exemple de mois
+                const region = 'Tillabéri';  // Exemple de région
+
+				
+
+
+
+
+const points = data
+    .filter(d => d.lat && d.long) // Garder seulement les points avec des coordonnées valides
+    .map(d => ({
+        name: d.localite,
+        lat: parseFloat(d.lat),
+        lon: parseFloat(d.long),
+		color: d.etapes === 'alerte' ? 'red' :
+               d.etapes === 'evaluation' ? 'orange' :
+               d.etapes === 'intervention' ? 'green' : 'gray', // Couleur en fonction de l'étape
+		category: d.etapes
+    }));
+	console.log('Points to be plotted:', data);
+
+	
+// Group points by category
+//console.log('Points to be plotted:', points);
+
+
+
+const categoryColors = {
+    'alerte': 'red',
+    'evaluation': 'orange',
+    'intervention': 'green'
+};
+
+
+// Group points by category
+const groupedPoints = points.reduce((acc, point) => {
+    if (!acc[point.category]) acc[point.category] = [];
+    acc[point.category].push(point);
+    return acc;
+}, {});
+const visibleCategories = new Set(Object.keys(groupedPoints));
+
+
+const categorySeries = Object.keys(categoryColors).map(category => ({
+    type: 'mappoint',
+    name: category,
+    color: categoryColors[category],
+    data: points.filter(point => point.category === category).map(point => ({
+        x: point.lon,
+        y: point.lat,
+        name: point.name
+    })),
+    cluster: {
+        enabled: true,
+        allowOverlap: false,
+        animation: {
+            duration: 450
+        },
+        layoutAlgorithm: {
+            type: 'grid',
+            gridSize: 50
+        },
+        dataLabels: {
+            enabled: true,
+            format: '{point.clusterPointsAmount}',
+            style: {
+                color: 'black',
+                textOutline: 'none',
+                fontWeight: 'bold',
+                fontSize: '12px'
+            },
+            align: 'center',
+            verticalAlign: 'middle'
+        },
+        marker: {
+            fillColor: 'white',
+            lineColor: categoryColors[category],
+            lineWidth: 2,
+            radius: 15,
+            symbol: 'circle'
+        }
+    },
+    marker: {
+        fillColor: 'white',
+        lineColor: categoryColors[category],
+        lineWidth: 2,
+        radius: 5,
+        symbol: 'circle'
+    },
+	dataLabels: {
+                    enabled: true,
+                    format: '{point.clusterPointsAmount}',
+                    style: {
+                        color: 'blue',
+                        textOutline: 'none',
+                        fontWeight: 'normal'
+                    }
+                },
+    tooltip: {
+        pointFormat: 'Localité: {point.name}'
+    }
+}));
+
+Highcharts.mapChart('container', {
+    chart: {
+        map: communeGeoJson,
+    },
+    title: {
+        text: ''
+    },
+    mapNavigation: {
+        enabled: true,
+        buttonOptions: {
+            verticalAlign: 'bottom'
+        }
+    },
+    mapView: {
+        fitToBounds: true, // Cette option s'assurera que la carte est centrée sans zoomer
+    
+    },
+    legend: {
+        title: {
+            text: 'Categories'
+        },
+        layout: 'vertical',
+        align: 'right',
+        verticalAlign: 'middle'
+    },
+    series: [
+        {
+            type: 'map',
+            name: 'Basemap',
+            data: communeGeoJson.features,
+            borderColor: '#606060',
+            nullColor: 'rgba(200, 200, 200, 0.2)',
+            showInLegend: false
+        },
+        ...categorySeries
+    ],
+
+	tooltip: {
+        formatter: function () {
+            if (this.point.clusterPointsAmount) {
+                return `${this.point.cluster}: ${this.point.clusterPointsAmount}`;
+            }
+            return `${this.point.name}<br>Catégorie: ${this.series.name}`;
+        }
+    }
+});
+
+
+function updateVisiblePoints() {
+    const chart = Highcharts.charts[0]; // Assuming this is the first (and only) chart
+    const allPointsSeries = chart.get('allPoints');
+    
+    allPointsSeries.setData(points.filter(point => visibleCategories.has(point.category)).map(point => ({
+        ...point,
+        x: point.lon,
+        y: point.lat,
+        color: categoryColors[point.category]
+    })));
+}
+
+
+		$('.page-loader').hide();
+		$('#content').show();
+
+	} catch (error) {
+		console.error('Erreur de chargement du fichier JSON :', error);
+		$('.page-loader').text('Erreur de chargement des données.');
+	}
+});
+    
+	
+	</script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+
+    {% endblock content %}
+</body>
+</html>

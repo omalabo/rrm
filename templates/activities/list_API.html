@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="jumbotron jumbotron-fluid bg-light py-5 rounded shadow-sm">
+        <div class="container">
+            <!-- Titre principal centré et réduit en taille -->
+            <h2 class="text-center text-primary mb-4" style="font-size: 2rem; font-weight: bold;">
+                API POUR L'INTÉGRATION DES OUTILS EXTERNES (Power BI, etc...)
+            </h2>
+            <hr class="my-4">
+
+            <!-- Liste des API -->
+            <div class="list-group">
+                <!-- API Alertes -->
+                <a href="https://rrmniger.azurewebsites.net/activities/api/alertes" class="list-group-item list-group-item-action" target="_blank">
+                    <h5 class="mb-1" style="font-weight: bold;">Alertes</h5>
+                    <p class="mb-1" style="font-size: 0.9rem;"><strong>Obtenez les alertes actuelles à travers cette API.</strong></p>
+                    <small>https://rrmniger.azurewebsites.net/activities/api/alertes</small>
+                </a>
+
+                <!-- API Evaluations -->
+                <a href="https://rrmniger.azurewebsites.net/activities/api/evaluation/" class="list-group-item list-group-item-action" target="_blank">
+                    <h5 class="mb-1" style="font-weight: bold;">Evaluations</h5>
+                    <p class="mb-1" style="font-size: 0.9rem;"><strong>Accédez aux informations d'évaluation pour la région.</strong></p>
+                    <small>https://rrmniger.azurewebsites.net/activities/api/evaluation/</small>
+                </a>
+
+                <!-- API Interventions NFI -->
+                <a href="https://rrmniger.azurewebsites.net/activities/api/internfi/" class="list-group-item list-group-item-action" target="_blank">
+                    <h5 class="mb-1" style="font-weight: bold;">Interventions NFI</h5>
+                    <p class="mb-1" style="font-size: 0.9rem;"><strong>API pour les interventions Non-Food Items (NFI).</strong></p>
+                    <small>https://rrmniger.azurewebsites.net/activities/api/internfi/</small>
+                </a>
+
+                <!-- API Interventions PROTECTION -->
+                <a href="https://rrmniger.azurewebsites.net/activities/api/interprot/" class="list-group-item list-group-item-action" target="_blank">
+                    <h5 class="mb-1" style="font-weight: bold;">Interventions PROTECTION</h5>
+                    <p class="mb-1" style="font-size: 0.9rem;"><strong>Accédez aux données sur les interventions en matière de protection.</strong></p>
+                    <small>https://rrmniger.azurewebsites.net/activities/api/interprot/</small>
+                </a>
+
+                <!-- API Interventions WASH -->
+                <a href="https://rrmniger.azurewebsites.net/activities/api/interwash/" class="list-group-item list-group-item-action" target="_blank">
+                    <h5 class="mb-1" style="font-weight: bold;">Interventions WASH</h5>
+                    <p class="mb-1" style="font-size: 0.9rem;"><strong>API pour les interventions dans le domaine de l'eau, de l'assainissement et de l'hygiène (WASH).</strong></p>
+                    <small>https://rrmniger.azurewebsites.net/activities/api/interwash/</small>
+                </a>
+
+                <!-- API Interventions SECAL -->
+                <a href="https://rrmniger.azurewebsites.net/activities/api/intersecal/" class="list-group-item list-group-item-action" target="_blank">
+                    <h5 class="mb-1" style="font-weight: bold;">Interventions SECAL</h5>
+                    <p class="mb-1" style="font-size: 0.9rem;"><strong>Accédez aux interventions liées à la sécurité alimentaire et à la nutrition.</strong></p>
+                    <small>https://rrmniger.azurewebsites.net/activities/api/intersecal/</small>
+                </a>
+
+                <!-- API Interventions ABRI -->
+                <a href="https://rrmniger.azurewebsites.net/activities/api/interabri/" class="list-group-item list-group-item-action" target="_blank">
+                    <h5 class="mb-1" style="font-weight: bold;">Interventions ABRI</h5>
+                    <p class="mb-1" style="font-size: 0.9rem;"><strong>Obtenez les données concernant les interventions liées à l'abri et au logement.</strong></p>
+                    <small>https://rrmniger.azurewebsites.net/activities/api/interabri/</small>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

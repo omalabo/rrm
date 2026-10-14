@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+{% load crispy_forms_tags %}
+{% load static %}
+    
+        <link rel="stylesheet" href="{% static 'css/custum_white_on_blue_background.css' %}">
+        
+
+        <script src="{% static 'js/load_localite.js' %}"></script>
+
+        <!--Oumarou labo 31 Mai ajouter p-1 rounded shadow-lg-->
+        <div class="text-center intro p-1 rounded shadow-lg" style="margin-left: 25%;margin-right: 25%;">
+            <h2>Détails des provenances liés à l'alerte</h2>
+        </div>
+        <div class="container" style="background: #FFFF; width: 50%;" >
+        <small id="hint_intro" class="form-text text-muted"> Pour chaque provenance, saisir une entrée</small>
+            <form method="POST" id="myForm"  departement-url = '{% url "load_dep" %}' commune-url = '{% url "load_commune" %}' localite-url = '{% url "load_localites" %}'>
+                 {% csrf_token %}
+                 {{form | crispy}}
+                 <input type="submit" value="Enregistrer" class="btn btn-success mb-2">
+                  <button class="btn btn-primary mb-2" onclick="history.back()">Retour</button>
+            </form>
+            {% comment %} <a id="another_entry" class="btn btn-primary" href='{% url "mouvement_new"  alerte.id %}'>Ajouter un autre mouvement</a> {% endcomment %}
+          
+ 
+        </div>
+{
+{% endblock content %}
+
+{% comment %} <script>
+$(document).ready(function() {
+    let link=" {% url 'mouvement_new' "+$("#id_alerte").val +"%}";
+    $("#another_entry").attr("href",link);
+}
+
+</script> {% endcomment %}

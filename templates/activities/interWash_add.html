@@ -1,0 +1,203 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+
+    {% load static %}
+    
+        <link rel="stylesheet" href="{% static 'css/custum_white_on_blue_background.css' %}">
+        <!--Oumarou labo 31 Mai ajouter p-1 rounded shadow-lg-->
+        <div class="text-center intro p-1 rounded shadow-lg" style="margin-left: 25%;margin-right: 25%;">
+            <h2>Enregistrer une intervention WASH</h2>
+        </div>
+<!-- oumarou labo ajouté  le stylee et le lien JS-->
+        <script src="{% static 'js/evalwizard.js' %}"></script>
+        <style >
+            .form-check-label{ 
+            margin-left: 3%;
+        }
+
+        
+        </style>
+
+        <div class="container" style="background: #FFFF; width: 50%;" >
+          
+                <div style="margin:5%">
+                    <form method="POST" enctype="multipart/form-data" >
+                         {% load crispy_forms_tags %}
+                         {% csrf_token %}
+                         {{form|crispy}}
+                        <input type="submit" value="Enregistrer" class="btn btn-success">
+                    </form>               
+                </div>
+                
+            </div>
+        </div>
+    
+
+    
+<script>
+
+<!-- oumarou labo ajouté les champs du checkbox tout ce  qui est dans le javascript-->
+$(document).ready(function(){
+
+    var eau_fields =[ "label[for=id_nbStationEauPompage], input#id_nbStationEauPompage",
+                            "label[for=id_nbPersBesoinsEau], input#id_nbPersBesoinsEau",
+                            "label[for=id_nbWaterTruckingService], input#id_nbWaterTruckingService",
+                            "label[for=id_nbPointEauRehabilite], input#id_nbPointEauRehabilite",
+                            "label[for=id_nbPointEauTraite], input#id_nbPointEauTraite",
+                            "label[for=id_nbPersBenefEauUrgence], input#id_nbPersBenefEauUrgence",
+                            "label[for=id_nombre_hommes_beneficiaires_eau_urgence], input#id_nombre_hommes_beneficiaires_eau_urgence",
+                            "label[for=id_nombre_femmes_beneficiaires_eau_urgence], input#id_nombre_femmes_beneficiaires_eau_urgence",
+                            "label[for=id_nombre_garcons_beneficiaires_eau_urgence], input#id_nombre_garcons_beneficiaires_eau_urgence",
+                            "label[for=id_nombre_filles_beneficiaires_eau_urgence], input#id_nombre_filles_beneficiaires_eau_urgence",
+                            "label[for=id_nbPersBenefEauDurable], input#id_nbPersBenefEauDurable",
+                            "label[for=id_nombre_hommes_beneficiaires_eau_durable], input#id_nombre_hommes_beneficiaires_eau_durable",
+                            "label[for=id_nombre_femmes_beneficiaires_eau_durable], input#id_nombre_femmes_beneficiaires_eau_durable",
+                            "label[for=id_nombre_garcons_beneficiaires_eau_durable], input#id_nombre_garcons_beneficiaires_eau_durable",
+                            "label[for=id_nombre_filles_beneficiaires_eau_durable], input#id_nombre_filles_beneficiaires_eau_durable",
+                            ];
+                            
+    var latrine_fields =[ "label[for=id_nbLatrineUrgence], input#id_nbLatrineUrgence",
+                            "label[for=id_homme_benef_latrine], input#id_homme_benef_latrine",
+                            "label[for=id_femme_benef_latrine], input#id_femme_benef_latrine",
+                            "label[for=id_fille_benef_latrine], input#id_fille_benef_latrine",
+                            "label[for=id_garcon_benef_latrine], input#id_garcon_benef_latrine",
+                            "label[for=id_nbTrancheedefecation], input#id_nbTrancheedefecation",
+                            ];
+                            
+    var sensibilisation_fields =[ "label[for=id_nbSensibilisation], input#id_nbSensibilisation",
+                            "label[for=id_nbPersonneSensibilisation], input#id_nbPersonneSensibilisation",
+                            "label[for=id_personnes_sens], input#id_personnes_sens",
+                            "label[for=id_homme_benef_sens], input#id_homme_benef_sens",
+                            "label[for=id_femmes_benef_sens], input#id_femmes_benef_sens",
+                            "label[for=id_fille_benef_sens], input#id_fille_benef_sens",
+                            "label[for=id_garcon_benef_sens], input#id_garcon_benef_sens",
+                            ];
+                            
+    var produit_fields =[ "label[for=id_nbMenageBenefKitsHygiene], input#id_nbMenageBenefKitsHygiene",
+                            "label[for=id_nbProduitPurifiant], input#id_nbProduitPurifiant",
+                            "label[for=id_nbPersonneProduitPurifiant], input#id_nbPersonneProduitPurifiant",
+                            "label[for=id_nombre_hommes_beneficiaires_produits_purifiants], input#id_nombre_hommes_beneficiaires_produits_purifiants",
+                            "label[for=id_nombre_femmes_beneficiaires_produits_purifiants], input#id_nombre_femmes_beneficiaires_produits_purifiants",
+                            "label[for=id_nombre_garcons_beneficiaires_produits_purifiants], input#id_nombre_garcons_beneficiaires_produits_purifiants",
+                            "label[for=id_nombre_filles_beneficiaires_produits_purifiants], input#id_nombre_filles_beneficiaires_produits_purifiants",
+                            "label[for=id_nbPurifiants], input#id_nbPurifiants",
+                            ];
+
+
+    $.each(eau_fields,function(index,value){
+    $(value).hide(); 
+    var field_id =value.split("input")[1].trim();
+    $(field_id).removeAttr('required');
+                    });
+    
+    $.each(latrine_fields,function(index,value){
+    $(value).hide(); 
+    var field_id =value.split("input")[1].trim();
+    $(field_id).removeAttr('required');
+                    });
+
+    $.each(sensibilisation_fields,function(index,value){
+    $(value).hide(); 
+    var field_id =value.split("input")[1].trim();
+    $(field_id).removeAttr('required');
+                    });
+
+    $.each(produit_fields,function(index,value){
+    $(value).hide(); 
+    var field_id =value.split("input")[1].trim();
+    $(field_id).removeAttr('required');
+                    });
+
+    // 
+
+    
+    $('#id_eau').click(function(){
+        if ($(this).is(":checked")){
+            $.each(eau_fields,function(index,value){
+                $(value).show();
+                var field_id =value.split("input")[1].trim();
+                $(field_id).attr('required');
+                console.log(field_id);
+                if ($(field_id).length > 0) {
+                        console.log('L\'input existe.');
+                    } else {
+                        console.log('L\'input n\'existe pas.');
+                    }
+                }); 
+        }
+        else{
+            $.each(eau_fields,function(index,value){
+                $(value).hide();
+                var field_id =value.split("input")[1].trim();
+                $(field_id).removeAttr('required');
+                }); 
+            }
+
+    });
+
+    
+    // 
+    $('#id_latrine').click(function(){
+        if ($(this).is(":checked")){
+            $.each(latrine_fields,function(index,value){
+                $(value).show();
+                var field_id =value.split("input")[1].trim();
+                $(field_id).attr('required');
+                }); 
+        }
+        else{
+            $.each(latrine_fields,function(index,value){
+                $(value).hide();
+                var field_id =value.split("input")[1].trim();
+                $(field_id).removeAttr('required');
+                }); 
+            }
+
+    });
+
+    // 
+    $('#id_sensibilisation').click(function(){
+        if ($(this).is(":checked")){
+            $.each(sensibilisation_fields,function(index,value){
+                $(value).show();
+                var field_id =value.split("input")[1].trim();
+                $(field_id).attr('required');
+                }); 
+        }
+        else{
+            $.each(sensibilisation_fields,function(index,value){
+                $(value).hide();
+                var field_id =value.split("input")[1].trim();
+                $(field_id).removeAttr('required');
+                }); 
+            }
+
+    });
+
+    // 
+    $('#id_produit').click(function(){
+        if ($(this).is(":checked")){
+            $.each(produit_fields,function(index,value){
+                $(value).show();
+                var field_id =value.split("input")[1].trim();
+                $(field_id).attr('required');
+                }); 
+        }
+        else{
+            $.each(produit_fields,function(index,value){
+                $(value).hide();
+                var field_id =value.split("input")[1].trim();
+                $(field_id).removeAttr('required');
+                }); 
+            }
+
+    });
+
+
+       
+});
+</script>
+
+{% endblock content %}

@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+<div class="jumbotron jumbotron-fluid" >
+ <div style="margin-left:  5% ">
+    <h2> Détails du positionnement effectuée par {{positionnement.acteur}} à {{positionnement.alerte.localite}}</h2>
+    <hr>
+    <h4><p>Région de :  {{positionnement.alerte.localite.commune.departement.region}} </p>
+       <p> Département:  {{positionnement.alerte.localite.commune.departement}} </p>
+       <p> Commune de:  {{positionnement.alerte.localite.commune}} </p>
+       <p> Localité de:  {{positionnement.alerte.localite}} </p>
+
+
+    </h4>
+ </div>
+    
+</div>
+
+
+<!-- Autoriser la modification uniquement lorsque l'élement n'est pas validé-->
+<!--oummarou labo mb-2-->
+<a class="btn btn-secondary mb-2" style="margin-left: 5%" href=" {% url 'alerte_detail' positionnement.alerte.id  %}">Retour à l'alerte</a>
+{% if user.last_name|lower == evaluation.acteur|lower%}
+<a class="btn btn-success" href="{% url 'positionnement_update' positionnement.id %}">Modifier</a>
+ {% endif %}
+
+<div style="margin-left: 5%" class="card" style="width:  18rem;">
+  <ul class="list-group-striped  list-group-flush" >
+    <li class="list-group-item">
+            <p><strong>Acteur</strong>: {{positionnement.acteur}}</p>
+    </li>
+
+        <li class="list-group-item">
+                <p><strong>Source alerte: </strong>{{positionnement.alerte.get_source_display}}</p>
+        </li>
+        <li class="list-group-item">
+                <p><strong>Date de réception: </strong>{{positionnement.alerte.date_reception}}</p>
+        </li>
+        <li class="list-group-item">
+                <p><strong>Nombre de ménage affectés: </strong>{{positionnement.alerte.menages_affectes}}</p>
+        </li>
+        <li class="list-group-item">
+                <p><strong>Statut de confirmation: </strong>{{positionnement.alerte.confirmation_status}}</p>
+        </li>
+        {% if alerte.confirmation_status %}
+        <li class="list-group-item"><p><strong>Date de confirmation: </strong>{{positionnement.alerte.date_confirmation}}</p>   </li> 
+        {% endif %}   
+
+        <li class="list-group-item">
+                <p><strong>Nombre de kits NFI: </strong> {{positionnement.nombre_kit_nfi}}</p>
+        </li>
+        <li class="list-group-item">
+                <p><strong>Nombre de kits abri: </strong> {{positionnement.nombre_kit_abri}}</p>
+        </li>
+        <li class="list-group-item">
+                <p><strong>Nombre de ménages NFI:  </strong>{{ positionnement.nombre_menage_nfi}}</p>
+        </li>
+        <li class="list-group-item">
+                <p><strong>Nombre de ménages abri: </strong> {{positionnement.nombre_menage_abri}}</p>
+        </li>  
+        <li class="list-group-item">
+                <p><strong>Nombre de ménages SECAL: </strong> {{positionnement.nombre_menage_secal}}</p>
+        </li>  
+        <li class="list-group-item">
+                <p><strong>Nombre de personnes VBG: </strong> {{positionnement.nombre_pers_vbg}}</p>
+        </li>  
+        <li class="list-group-item">
+                <p><strong>Nombre de latrines urgences: </strong> {{positionnement.nombre_latrines_urgentes}}</p>
+        </li>  
+        <li class="list-group-item">
+                <p><strong>Nombre de PMH à réhabiliter: </strong> {{positionnement.nombre_pmh_a_rehabiliter}}</p>
+        </li> 
+        <li class="list-group-item">
+                <p><strong>Nombre de PMH à construire: </strong> {{positionnement.nombre_pmh_a_construire}}</p>
+        </li>  
+        <li class="list-group-item">
+                <p><strong>Nombre de personnes à sensibiliser Hygiène: </strong> {{positionnement.nombre_personnes_sensibiliser_hygiene}}</p>
+        </li>  
+        <li class="list-group-item">
+                <p><strong>Nombre de comités de points d'eau à former: </strong> {{positionnement.nombre_comite_eau_a_former}}</p>
+        </li>  
+        <li class="list-group-item">
+                <p><strong>Nombre de kits hygiène: </strong> {{positionnement.nombre_kits_hygiene}}</p>
+        </li>  
+</div>
+
+<!-- Autoriser la modification uniquement lorsque l'élement n'est pas validé-->
+<!--oummarou labo mt-2-->
+<a class="btn btn-secondary mt-2" style="margin-left: 5%" href=" {% url 'list_positionnement' %}">Retour à la liste des positionnements</a>
+ {% if user.last_name|lower == evaluation.acteur|lower%}
+ <a class="btn btn-success" href="{% url 'positionnement_update' positionnement.id %}">Modifier</a>
+ {% endif %}
+{% endblock content %} 
+
+    

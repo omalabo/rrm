@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% load static %}
+<script src="{% static 'js/evalwizard.js' %}"></script>
+<script src="{% static 'js/datepicker_spec.js' %}"></script>
+<link rel="stylesheet" href="{% static 'css/custum_white_on_blue_background.css' %}">
+
+<!--Oumarou labo 31 Mai ajouter p-1 rounded shadow-lg style="margin-left: 11%; margin-right: 11%;"-->
+<div class="text-center intro p-1 rounded shadow-lg"  style="margin-left: 11%; margin-right: 11%;"   >
+        <h2>Mise à jour du positionnement</h2>
+        </div>
+
+
+<div class="container" >
+        
+            <form method="post">
+                {% csrf_token %}
+                {% load crispy_forms_tags %}          
+                {{form|crispy}}
+                <input type="submit" class="btn-success" value="Modifier">
+            </form>
+        
+    </div>
+    
+{% endblock content %}

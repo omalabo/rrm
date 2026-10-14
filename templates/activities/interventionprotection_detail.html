@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+<div class="jumbotron jumbotron-fluid" >
+ <div style="margin-left:  5% ">
+    <h2> Détails de l'intervention Protection effectuée par {{interventionprotection.acteur}} à {{interventionprotection.alerte.localite}}</h2>
+    <hr>
+    <h4><p>Région de :  {{interventionprotection.alerte.localite.commune.departement.region}} </p>
+       <p> Département:  {{interventionprotection.alerte.localite.commune.departement}} </p>
+       <p> Commune de:  {{interventionprotection.alerte.localite.commune}} </p>
+       {% comment %} <p>Acteur :  {{interventionprotection.acteur}}</p> {% endcomment %}
+       <p>Date début:   {{interventionprotection.date_debut}}</p>
+       <p>Date fin: {{interventionprotection.date_fin}}</p>
+       {% if interventionprotection.user_update %}
+       <p>Dernière personne ayant apporté une modification: {{interventionprotection.user_update.last_name}}</p>
+    
+    {% endif %}
+    </h4>
+ </div>
+
+</div>
+<div class ="d-flex p-2 bd-highlight">
+        <!-- Autoriser la modification uniquement lorsque l'élement n'est pas validé-->
+        <!--oummarou labo mb-2-->
+        <a class="btn btn-secondary mb-2" style="margin-left: 5%" href=" {% url 'alerte_detail' interventionprotection.alerte.id %}">Retour à l'alerte</a>
+        {% if user.last_name|lower == interventionprotection.acteur|lower %}
+        <a class="btn btn-primary" href="{% url 'update-protection' interventionprotection.id %}">Modifier</a>
+        {% endif %}
+
+        <!-- {% if interventionprotection.validation == 1 and user.categorie == 3 %}
+        <form method="post" action="{% url 'validate_inter_nfi' interventionprotection.id %}">
+                        {% csrf_token %}
+                <button   class="btn btn-success"  type="submit">Valider</button>
+        </form>
+                        
+        {% else %}
+                <button  class="btn btn-success disabled"  type="submit"  title="Enregistrement déjà validé">Valider</button> 
+
+        {% endif %}  -->
+
+</div>
+
+<div style="margin-left: 5% ;margin-right:10%" class="card" style="width:  18rem;">
+  <ol type="1" class="list-group-striped  list-group-flush" >
+        <li class="list-group-item">
+                <p><strong>Modalité de l'intervention</strong>: {{interventionprotection.modalite_intervention}}</p>
+        </li>
+        <li class="list-group-item">
+                <p><strong>Montant total distribué (CFA)</strong>: {{interventionprotection.montant_cash}}</p>
+        </li>
+        <li class="list-group-item">
+                <p><strong>Nbre de personnes bénéficiaires</strong>: {{interventionprotection.Personnesbeneficiaires}}</p>
+        </li>
+        <li class="list-group-item">
+                <p><strong>Personnes formées sur la protection transversale</strong>: {{interventionprotection.PersonnesFormees}}</p>
+        </li>
+        <li class="list-group-item">
+                <p><strong>Personnes sensibilisées sur la protection transversale</strong>: {{interventionprotection.PersonnesSensibilise}}</p>
+        </li>
+         <li class="list-group-item">
+                <p><strong>Audit de protection mainstreaming réalisé</strong>: {{interventionprotection.AuditProtection}}</p>
+        </li>
+        <li class="list-group-item">
+                <p><strong>Evaluations Rapide Protection réalisées</strong>: {{interventionprotection.EvalRapidProt}}</p>
+        </li>
+        <li class="list-group-item">
+                <p><strong>Cas de protection identifié</strong>: {{interventionprotection.CasProtIdentifies}}</p>
+        </li>
+        <li class="list-group-item">
+                <p><strong>Cas de protection pris en charge</strong>: {{interventionprotection.CasProtPrisEnCharge}}</p>
+        </li>
+        <li class="list-group-item">
+                <p><strong>Personnes a Besoins Specifics identifiées</strong>: {{interventionprotection.PBSIdentifies}}</p>
+        </li>
+        <li class="list-group-item">
+                <p><strong>Personnes a Besoins Specifics prises en charge</strong>: {{interventionprotection.PBSPrisEnCharge}}</p>
+        </li>
+        <li class="list-group-item">
+                <p><strong>Cas de VBG identifié</strong>: {{interventionprotection.VBGIdentifie}}</p>
+        </li>
+        <li class="list-group-item">
+                <p><strong>Cas de VBG pris en charge</strong>: {{interventionprotection.VBGPrisEnCharge}}</p>
+        </li>
+        <li class="list-group-item">
+                <p><strong>Kits API distribués</strong>: {{interventionprotection.Nbre_api_distribue}}</p>
+        </li>
+  </ol>
+</div>
+<!--oummarou labo mt-2-->
+<a class="btn btn-secondary mt-2" style="margin-left: 5%" href=" {% url 'list_interventionprotection'%}">Retour à la liste des interventions</a>
+{% if user.last_name|lower == interventionprotection.acteur|lower %}
+<a class="btn btn-primary" href="{% url 'update-protection' interventionprotection.id %}">Modifier</a>
+{% endif %}
+
+{% endblock content %}

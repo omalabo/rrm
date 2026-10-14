@@ -1,0 +1,843 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+{% load static %}
+    
+<link rel="stylesheet" href="{% static 'css/custum_white_on_blue_background.css' %}">
+<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+
+<script src="{% static 'js/datepicker_spec.js' %}"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> <!-- jQuery for simplicity -->
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script> <!-- Bootstrap JS -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<!-- Bootstrap 5 JS Bundle (inclut Popper.js) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
+<style>
+    /* Personnalisation des champs de formulaire */
+    .form-control {
+        font-size: 1rem; /* Taille de police */
+        border-color: #ddd; /* Couleur de la bordure */
+    }
+
+    /* Ombre légère pour les champs de saisie */
+    .form-control:focus {
+        box-shadow: 0 0 10px rgba(0, 123, 255, 0.3); /* Ombre bleue plus marquée lors de la sélection */
+        border-color: #007bff; /* Changer la bordure lors du focus */
+    }
+
+    /* Ajustement pour une mise en page fluide */
+    .accordion .card-body {
+        padding: 15px;
+    }
+
+    /* Personnalisation des titres */
+    .accordion .btn-link {
+        font-size: 1.1rem;
+        font-weight: bold;
+    }
+
+    /* Assurer que le label soit au-dessus du champ */
+    .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;  /* Espacement entre le label et le champ */
+    }
+
+    /* Ajout d'un effet sur le focus des champs de formulaire */
+    .form-control:focus {
+        border-color: #007bff;
+        box-shadow: 0 0 0 0.25rem rgba(0, 123, 255, 0.25);
+    }
+    .centered-text {
+        text-align: center;            /* Centrer le texte */
+        font-weight: bold;             /* Mettre le texte en gras */
+        font-size: 24px;               /* Augmenter la taille du texte */
+        margin-bottom: 1em;            /* Ajouter un espace de 2 lignes après le texte */
+    }
+</style>
+
+<!--Oumarou labo 31 Mai ajouter p-1 rounded shadow-lg-->
+<div class="text-center intro p-1 rounded shadow-lg"  style="margin-left: 25%;margin-right: 25%;">
+    <!--Oumarou labo -->
+        <h2>Mise à jour - intervention Santé Nutrition </h2>
+    <!--Oumarou labo -->
+</div>
+    <div class="container" style="background: #FFFF; width: 50%;" >
+        <div style="margin:5%">
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                {% load crispy_forms_tags %}
+                
+                <div class="accordion" id="evaluationAccordion">
+                    
+                    <div class="card-body row">
+                        <div class="col-md-4 mb-3">
+                            <div class="form-group">
+                                <label >Alerte</label>
+                                {{ form.alerte }}
+                            </div>
+                        </div>
+
+                        <div class="col-md-4 mb-3">
+                            <div class="form-group">
+                            <label for="id_zone_enquete">Acteur *</label>
+                            <select name="acteur" id="id_acteur" class="form-control form-control-sm">
+                                
+                                {% for value, label in form.acteur.field.choices %}
+                                    <option value="{{ value }}" {% if value == form.acteur.value %} selected {% endif %}>
+                                        {{ label }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-4 mb-3">
+                            <div class="form-group">
+                                <label >Type intervention</label>
+                                {{ form.type_intervention_sante }}
+                            </div>
+                        </div>
+
+                         <!-- Date Début -->
+                         <div class="col-md-4 mb-3">
+                            <div class="form-group">
+                                <label for="id_date_debut">Date Début</label>
+                                <input type="date" name="date_debut"  value="{{ form.date_debut.value|date:"Y-m-d" }}" class="form-control" id="id_date_debut">
+                            </div>
+                        </div>
+
+                        <!-- Date Fin -->
+                        <div class="col-md-4 mb-3">
+                            <div class="form-group">
+                                <label for="id_date_fin">Date Fin</label>
+                                <input type="date" name="date_fin"  value="{{ form.date_fin.value|date:"Y-m-d" }}" class="form-control" id="id_date_fin">
+                            </div>
+                        </div>
+
+
+                    </div>
+
+                    <!-- Soins de Santé Primaire -->
+                    <div class="card">
+                        <div class="card-header" id="headingHealthCare">
+                            <button class="btn btn-link" type="button" data-bs-toggle="collapse" data-bs-target="#healthCareGroup" aria-expanded="false" aria-controls="healthCareGroup">
+                                Soins de santé primaire
+                            </button>
+                        </div>
+                        <div id="healthCareGroup" class="collapse" aria-labelledby="headingHealthCare" data-bs-parent="#evaluationAccordion">
+                            
+                            
+                            <div class="card-body row">
+
+                                <div class="col-md-3 mb-3">
+                                    <div class="form-group">
+                                        <label for="id_pdi"> Personnes déplacés internes : </label>
+                                        {{ form.pdi }}  <!-- Affichage du champ "PDI" -->
+                                    </div>
+                                </div>
+
+                                <!-- Total PDI Consulté -->
+                                <div class="col-md-3 mb-3">
+                                    <div class="form-group">
+                                        <label for="id_total_pdi_consulte">Total PDI consultés</label>
+                                        {{ form.total_pdi_consulte }}  <!-- Affichage du champ "total_pdi_consulte" -->
+                                    </div>
+                                </div>
+
+                                
+                                <div class="col-md-3 mb-3">
+                                    <div class="form-group">
+                                        <label for="id_total_refugie_demandeurs_asile_consulte">Total demandeurs d'asiles consultés</label>
+                                        {{ form.total_refugie_demandeurs_asile_consulte }}  <!-- Affichage du champ "total_refugie_demandeurs_asile_consulte" -->
+                                    </div>
+                                </div>
+
+                                <div class="col-md-3 mb-3">
+                                    <div class="form-group">
+                                        <label for="id_total_population_hote_consulte">Total populations hôtes consultées</label>
+                                        {{ form.total_population_hote_consulte }}  <!-- Affichage du champ "total_population_hote_consulte" -->
+                                    </div>
+                                </div>
+
+                                <!-- Formset Cas Maladie -->
+                            
+                                <div class="card">
+                                    <div class="card-header">
+
+                                            <div id="casmaladie-formset-container">
+                                                
+                                                {{ formset_casmaladie.management_form }}
+                                                {% for form in formset_casmaladie %}
+                                                    <div class="repeatable-casmaladie-form">
+                                                        <input type="hidden" name="form-{{ forloop.counter0 }}-code_casmaladie" value="{{ form.id.value|default_if_none:'' }}">
+                                                        <div class="centered-text row">
+                                                            <div class="col-md-6 mb-3">
+                                                                Cas de la maladie:
+                                                            </div>
+                                                           
+                                                            <div class="col-md-6 mb-3">
+                                                                <div class="form-group">
+                                                                    {{ form.type_maladie_intervention_sante }}  <!-- Afficher le champ 'organisation' -->
+                                                                </div>
+                                                            </div>
+                                                           
+                                                        </div>
+                                                        <div class="row">
+                                                            
+                                                            <div class="col-md-6 mb-3">
+                                                                <div class="form-group">
+                                                                    <label for="{{ form.statut.id_for_label }}">Statut populations</label>
+                                                                    {{ form.statutcas }}  <!-- Afficher le champ 'organisation' -->
+                                                                </div>
+                                                            </div>
+                                                            
+                                                            <div class="col-md-3 mb-3">
+                                                                <div class="form-group">
+                                                                    <label for="{{ form.total_cas.id_for_label }}"># Personnes</label>
+                                                                    
+                                                                        {{ form.total_cas }}  <!-- Champ pour saisir la période -->
+                                                                    
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="col-md-3 mb-3">
+                                                                <div class="form-group">
+                                                                    <label for="{{ form.total_hommes_cas.id_for_label }}">Total hommes</label>
+                                                                    
+                                                                        {{ form.total_hommes_cas }}  <!-- Champ pour saisir la période -->
+                                                                    
+                                                                </div>
+                                                            </div>
+
+                                                            
+
+                                                            <div class="col-md-4 mb-3">
+                                                                <div class="form-group">
+                                                                    <label for="{{ form.total_femmes_cas.id_for_label }}">Total femmes</label>
+                                                                    {{ form.total_femmes_cas }}  <!-- Afficher le champ 'type_casmaladie' -->
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-4 mb-3">
+                                                                <div class="form-group">
+                                                                    <label for="{{ form.total_filles_moins_5.id_for_label }}">Total filles - 5 ans</label>
+                                                                    {{ form.total_filles_moins_5 }}  <!-- Afficher le champ 'casmaladie_ponctuelle' -->
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-4 mb-3">
+                                                                <div class="form-group">
+                                                                    <label for="{{ form.total_garcons_moins_5.id_for_label }}">Total garçons - 5 ans</label>
+                                                                    {{ form.total_garcons_moins_5 }}  <!-- Afficher le champ 'commentaires' -->
+                                                                </div>
+                                                            </div>
+                                                        
+                                                            <!-- Bouton Supprimer -->
+                                                            <div class="col-md-5 mb-3">
+
+                                                            </div>
+                                                            <div class="col-md-7 mb-3">
+                                                                <button type="button" class="btn btn-danger remove-casmaladie-btn" style="display: inline-block;">Supprimer</button>
+                                                            </div>
+                                                            
+                                                        </div>
+                                                    </div>
+                                                    <hr/>
+                                                {% endfor %}
+                                            </div>
+                                    
+                                            <!-- Bouton pour ajouter un nouveau formulaire d'casmaladie -->
+                                            <button type="button" id="add-casmaladie-btn" class="btn btn-primary">Ajouter un  nouveau cas</button>
+                                    </div>
+                                </div>
+
+
+
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <!-- Groupe Santé de la Reproduction -->
+                    <div class="card">
+                        <div class="card-header" id="headingReproductiveHealth">
+                            <button class="btn btn-link" type="button" data-bs-toggle="collapse" data-bs-target="#reproductiveHealthGroup" aria-expanded="false" aria-controls="reproductiveHealthGroup">
+                                Santé de la Reproduction
+                            </button>
+                        </div>
+                        <div id="reproductiveHealthGroup" class="collapse" aria-labelledby="headingReproductiveHealth" data-bs-parent="#evaluationAccordion">
+                            <div class="card-body row">
+                              
+                                <div class="col-md-4 mb-3">
+                                    <div class="form-group">
+                                        <label for="id_depistage_pediatrique_action_sante">Consultation post natale</label>
+                                        {{ form.cpn }}  <!-- Affichage du champ "depistage_pediatrique_action_sante" -->
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4 mb-3">
+                                    <div class="form-group">
+                                        <label for="id_depistage_pediatrique_MAS_action_sante"># consultations de planning familiale</label>
+                                        {{ form.pf }}  <!-- Affichage du champ "depistage_pediatrique_MAS_action_sante" -->
+                                    </div>
+                                </div>
+
+                                
+                                <div class="col-md-4 mb-3">
+                                    <div class="form-group">
+                                        <label for="id_depistage_pediatrique_MAM_action_sante"># d'enfants vaccinés PENTA3</label>
+                                        {{ form.nombre_enfant_vaccine_population_sante_repro_penta3 }}  <!-- Affichage du champ "depistage_pediatrique_MAM_action_sante" -->
+                                    </div>
+                                </div>
+
+                                
+                                <div class="col-md-4 mb-3">
+                                    <div class="form-group">
+                                        <label for="id_mam_pec_cm"># D'enfants vaccinés VAR 1,2</label>
+                                        {{ form.nombre_enfant_vaccine_population_sante_repro_var }}  <!-- Affichage du champ "mam_pec_cm" -->
+                                    </div>
+                                </div>
+
+                                
+                                <div class="col-md-4 mb-3">
+                                    <div class="form-group">
+                                        <label for="id_refere_creni_cm"># D'enfants vaccinés Polio 3</label>
+                                        {{ form.nombre_enfant_vaccine_population_sante_repro_polio }}  <!-- Affichage du champ "refere_creni_cm" -->
+                                    </div>
+                                </div>
+
+
+                                <div class="col-md-4 mb-3">
+                                    <div class="form-group">
+                                        <label for="id_total_fefa"># D'enfants vaccinés - consultation prénatale</label>
+                                        {{ form.nombre_enfant_vaccine_population_sante_repro_cpon }}  <!-- Affichage du champ "total_fefa" -->
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Groupe Nutrition -->
+                    <div class="card">
+                        <div class="card-header" id="headingNutrition">
+                            <button class="btn btn-link" type="button" data-bs-toggle="collapse" data-bs-target="#nutritionGroup" aria-expanded="false" aria-controls="nutritionGroup">
+                                Nutrition
+                            </button>
+                        </div>
+                        <div id="nutritionGroup" class="collapse" aria-labelledby="headingNutrition" data-bs-parent="#evaluationAccordion">
+                            <div class="card-body row">
+                                <!-- Dépistage systématique Action Santé -->
+                                <div class="col-md-4 mb-3">
+                                    <div class="form-group">
+                                        <label for="id_depistage_pediatrique_action_sante"># D'enfants dépistés</label>
+                                        {{ form.depistage_pediatrique_action_sante }}  <!-- Affichage du champ "depistage_pediatrique_action_sante" -->
+                                    </div>
+                                </div>
+
+                                
+
+                                
+
+
+                                <!-- Dépistage systématique MAM -->
+                                
+                                <hr/>
+                                <div class="centered-text">
+                                    MAM
+                                </div>
+
+                                <!-- Dépistage systématique MAM -->
+                                <div class="col-md-4 mb-3">
+                                    <div class="form-group">
+                                        <label for="id_depistage_pediatrique_MAM_action_sante"># Dépistés</label>
+                                        {{ form.depistage_pediatrique_MAM_action_sante }}  <!-- Affichage du champ "depistage_pediatrique_MAM_action_sante" -->
+                                    </div>
+                                </div>
+
+                                <!-- Dépistage systématique MAS -->
+                                <div class="centered-text">
+                                    MAS
+                                </div>
+                                <hr/>
+                                
+                                <div class="col-md-4 mb-3">
+                                    <div class="form-group">
+                                        <label for="id_depistage_pediatrique_MAS_action_sante"># Dépistés MAS</label>
+                                        {{ form.depistage_pediatrique_MAS_action_sante }}  <!-- Affichage du champ "depistage_pediatrique_MAS_action_sante" -->
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4 mb-3">
+                                    <div class="form-group">
+                                        <label for="id_depistage_pediatrique_MAS_action_sante"># Dépistés MAS avec complications</label>
+                                        {{ form.depistage_pediatrique_MAS_complication_action_sante }}  
+                                    </div>
+                                </div>
+                                
+
+                                
+
+                                
+
+                                <!-- Dépistage systématique CM -->
+                                
+                                <hr/>
+                                <div class="centered-text">
+                                    Cliniques mobiles(CM)
+                                </div>
+
+                                <!-- MAM PEC CM -->
+                                <div class="col-md-4 mb-3">
+                                    <div class="form-group">
+                                        <label for="id_mam_pec_cm">Malnutris aiguë modérés prise en charge dans les CM</label>
+                                        {{ form.mam_pec_cm }}  <!-- Affichage du champ "mam_pec_cm" -->
+                                    </div>
+                                </div>
+
+                                <!-- MAS PEC CM -->
+                                <div class="col-md-4 mb-3">
+                                    <div class="form-group">
+                                        <label for="id_mam_pec_cm">Malnutris aiguë sévères prise en charge dans les CM</label>
+                                        {{ form.mas_pec_cm }}  <!-- Affichage du champ "mam_pec_cm" -->
+                                    </div>
+                                </div>
+
+                                <!-- Référés Creni CM -->
+                                <div class="col-md-4 mb-3">
+                                    <div class="form-group">
+                                        <label for="id_refere_creni_cm">Référés CRENI CM</label>
+                                        {{ form.refere_creni_cm }}  <!-- Affichage du champ "refere_creni_cm" -->
+                                    </div>
+                                </div>
+
+                                <!-- Dépistage systématique CM -->
+                                <div class="centered-text">
+                                    Femmes enceintes et allaitantes (FEFA)
+                                </div>
+                                <hr/>
+
+                                <!-- Total FEFA -->
+                                <div class="col-md-4 mb-3">
+                                    <div class="form-group">
+                                        <label for="id_total_fefa">Total FEFA</label>
+                                        {{ form.total_fefa }}  <!-- Affichage du champ "total_fefa" -->
+                                    </div>
+                                </div>
+
+                                <!-- FEFA MAM -->
+                                <div class="col-md-4 mb-3">
+                                    <div class="form-group">
+                                        <label for="id_fefa_mam">FEFA MAM (Malnutrition aiguë moderée)</label>
+                                        {{ form.fefa_mam }}  <!-- Affichage du champ "fefa_mam" -->
+                                    </div>
+                                </div>
+
+                                <!-- FEFA MAS -->
+                                <div class="col-md-4 mb-3">
+                                    <div class="form-group">
+                                        <label for="id_fefa_mas">FEFA MAS (Malnutrition aiguë sévère)</label>
+                                        {{ form.fefa_mas }}  <!-- Affichage du champ "fefa_mas" -->
+                                    </div>
+                                </div>
+                                
+
+                                <!-- FEFA MAM PEC -->
+                                <div class="col-md-4 mb-3">
+                                    <div class="form-group">
+                                        <label for="id_fefa_mam_pec">FEFA MAM (Malnutrition aiguë moderée) PEC</label>
+                                        {{ form.fefa_mam_pec }}  <!-- Affichage du champ "fefa_mam_pec" -->
+                                    </div>
+                                </div>
+
+                                <!-- FEFA MAS PEC -->
+                                <div class="col-md-4 mb-3">
+                                    <div class="form-group">
+                                        <label for="id_fefa_mas_pec">FEFA MAS (Malnutrition aiguë sévère) PEC</label>
+                                        {{ form.fefa_mas_pec }}  <!-- Affichage du champ "fefa_mas_pec" -->
+                                    </div>
+                                </div>
+
+                                <!-- MUAC -->
+                                <div class="col-md-4 mb-3">
+                                    <div class="form-group">
+                                        <label for="id_muac">MUAC(Mid-Upper Arm Circumference) / PB(Périmètre Brachial) </label>
+                                        {{ form.muac }}  <!-- Affichage du champ "muac" -->
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Groupe Sensibilisation -->
+                    <div class="card">
+                        <div class="card-header" id="headingAwareness">
+                            <button class="btn btn-link" type="button" data-bs-toggle="collapse" data-bs-target="#awarenessGroup" aria-expanded="false" aria-controls="awarenessGroup">
+                                Sensibilisation
+                            </button>
+                        </div>
+                        <div id="awarenessGroup" class="collapse" aria-labelledby="headingAwareness" data-bs-parent="#evaluationAccordion">
+                            <div class="card-body row">
+                                <!-- Nombre de ménages touchés -->
+                                <div class="col-md-4 mb-3">
+                                    <div class="form-group">
+                                        <label for="id_nombre_menage_touche"># Ménages touchés</label>
+                                        {{ form.nombre_menage_touche }}  <!-- Affichage du champ "nombre_menage_touche" -->
+                                    </div>
+                                </div>
+
+                                
+                                <hr/>
+                                <div class="centered-text">
+                                    Pratiques familiales essentielles
+                                </div>
+
+                                <!-- Hommes Pratiques Familiales Essentielles -->
+                                <div class="col-md-4 mb-3">
+                                    <div class="form-group">
+                                        <label for="id_nombre_total_pratiques_familiales_essentielles">Total des béneficiaires </label>
+                                        {{ form.nombre_total_pratiques_familiales_essentielles }}  <!-- Affichage du champ "nombre_homme_pratiques_familiales_essentielles" -->
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4 mb-3">
+                                    <div class="form-group">
+                                        <label for="id_nombre_homme_pratiques_familiales_essentielles">Hommes </label>
+                                        {{ form.nombre_homme_pratiques_familiales_essentielles }}  <!-- Affichage du champ "nombre_homme_pratiques_familiales_essentielles" -->
+                                    </div>
+                                </div>
+
+                                <!-- Femmes Pratiques Familiales Essentielles -->
+                                <div class="col-md-4 mb-3">
+                                    <div class="form-group">
+                                        <label for="id_nombre_femme_pratiques_familiales_essentielles">Femmes </label>
+                                        {{ form.nombre_femme_pratiques_familiales_essentielles }}  <!-- Affichage du champ "nombre_femme_pratiques_familiales_essentielles" -->
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Groupe Santé Mentale et Soutien Psychosocial -->
+                    <div class="card">
+                        <div class="card-header" id="headingMentalHealth">
+                            <button class="btn btn-link" type="button" data-bs-toggle="collapse" data-bs-target="#mentalHealthGroup" aria-expanded="false" aria-controls="mentalHealthGroup">
+                                Santé mentale et soutien psychosocial
+                            </button>
+                        </div>
+                        <div id="mentalHealthGroup" class="collapse" aria-labelledby="headingMentalHealth" data-bs-parent="#evaluationAccordion">
+                            <div class="card-body ">
+
+
+                                <div id="cassantementale-formset-container">
+                                    
+                                    {{ formset_cassantementale.management_form }}
+                                    {% for form in formset_cassantementale %}
+                                        <div class="repeatable-cassantementale-form">
+                                            <input type="hidden" name="form-{{ forloop.counter0 }}-code_cassantementale" value="{{ form.id.value|default_if_none:'' }}">
+                                            <div class="centered-text row">
+                                                   
+                                                <div class="col-md-6 mb-3">
+                                                    
+                                                        <label for="{{ form.caspsycho.id_for_label }}">Cas : </label>
+                                                        <!-- Afficher le champ 'organisation' -->
+                                                    
+                                                </div>
+
+                                                <div class="col-md-6 mb-3">
+                                                    <div class="form-group">
+                                                        {{ form.caspsycho }}  <!-- Afficher le champ 'organisation' -->
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                
+                                                
+                                                
+                                                <div class="col-md-3 mb-3">
+                                                    <div class="form-group">
+                                                        <label for="{{ form.total_cas.id_for_label }}">Total personnes</label>
+                                                        
+                                                            {{ form.total_cas_psycho }}  <!-- Champ pour saisir la période -->
+                                                        
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-3 mb-3">
+                                                    <div class="form-group">
+                                                        <label for="{{ form.total_hommes.id_for_label }}">Total hommes</label>
+                                                        
+                                                            {{ form.total_hommes }}  <!-- Champ pour saisir la période -->
+                                                        
+                                                    </div>
+                                                </div>
+
+                                                
+
+                                                <div class="col-md-4 mb-3">
+                                                    <div class="form-group">
+                                                        <label for="{{ form.total_femmes.id_for_label }}">Total femmes</label>
+                                                        {{ form.total_femmes }}  <!-- Afficher le champ 'type_cassantementale' -->
+                                                    </div>
+                                                </div>
+
+
+                                                <div class="col-md-4 mb-3">
+                                                    <div class="form-group">
+                                                        <label for="{{ form.total_filles.id_for_label }}">Total filles</label>
+                                                        {{ form.total_filles }}  <!-- Afficher le champ 'cassantementale_ponctuelle' -->
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4 mb-3">
+                                                    <div class="form-group">
+                                                        <label for="{{ form.total_garcons.id_for_label }}">Total garçons</label>
+                                                        {{ form.total_garcons }}  <!-- Afficher le champ 'commentaires' -->
+                                                    </div>
+                                                </div>
+                                               
+                                                <!-- Bouton Supprimer -->
+                                                <div class="col-md-5 mb-3">
+
+                                                </div>
+                                                <div class="col-md-7 mb-3">
+                                                    <button type="button" class="btn btn-danger remove-cassantementale-btn" style="display: inline-block;">Supprimer</button>
+                                                </div>
+                                                <div class="col-md-4 mb-3">
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <hr/>
+                                    {% endfor %}
+                                </div>
+                        
+                                <!-- Bouton pour ajouter un nouveau formulaire d'morbidite -->
+                                <button type="button" id="add-cassantementale-btn" class="btn btn-primary">Ajouter un cas</button>
+
+
+                            </div>
+                        </div>
+                    </div>
+
+
+                    
+
+                </div>
+                
+                <button type="submit" class="btn btn-primary">Enregistrer</button>
+            </form>
+    </div>
+    </div>
+
+    <script>
+     
+            document.addEventListener('DOMContentLoaded', function() {
+                            const formsetContainer = document.getElementById('casmaladie-formset-container');
+                            const addButton = document.getElementById('add-casmaladie-btn');
+                            
+                            // Initialiser le compteur des formulaires
+                            let formCount = formsetContainer.getElementsByClassName('repeatable-casmaladie-form').length;
+
+                            addButton.addEventListener('click', function() {
+                                // Cloner le premier formulaire
+                                const newForm = formsetContainer.getElementsByClassName('repeatable-casmaladie-form')[0].cloneNode(true);
+                                
+                                // Mettre à jour les noms et IDs des champs pour éviter les conflits
+                                const formFields = newForm.querySelectorAll('input, select, textarea');
+                                
+                                formFields.forEach(field => {
+                                    const name = field.name;
+                                    const id = field.id;
+                                    
+                                    // Mettre à jour le nom et l'ID pour chaque champ du formulaire cloné
+                                    field.name = name.replace(/-(\d+)-/, '-' + formCount + '-');
+                                    field.id = id.replace(/-(\d+)-/, '-' + formCount + '-');
+                                    
+                                    // Mettre à jour le label 'for' avec le bon ID
+                                    const label = newForm.querySelector('label[for="' + id + '"]');
+                                    if (label) {
+                                        label.setAttribute('for', field.id);
+                                    }
+
+                                    // Vider les valeurs des champs clonés
+                                    if (field.type === 'number' || field.classList.contains('numeric')) {
+                                        // Initialiser les champs numériques à 0
+                                        field.value = 0;
+                                    } else if (field.type === 'select-one') {
+                                        // Réinitialiser la sélection de l'élément <select> si nécessaire
+                                        field.selectedIndex = 0;  // Sélectionne la première option
+                                    } else {
+                                        // Pour les autres types de champs (text, textarea, etc.), on les vide
+                                        field.value = '';
+                                    }
+
+
+                                });
+
+                                // Supprimer l'input caché 'code_casmaladie lors de l'ajout d'un nouveau formulaire
+                                const hiddenInput = newForm.querySelector('input[name="form-' + formCount + '-code_casmaladie"]');
+                                if (hiddenInput) {
+                                    hiddenInput.remove();
+                                }
+                                
+                    
+                                // Afficher le bouton "Supprimer" pour le formulaire cloné
+                                const removeButton = newForm.querySelector('.remove-casmaladie-btn');
+                                if (removeButton) {
+                                    removeButton.style.display = 'inline-block';
+                                }
+
+                                // Ajouter le formulaire cloné dans le conteneur
+                                formsetContainer.appendChild(newForm);
+                                console.log(formsetContainer)
+                                
+                                // Créer un élément <hr /> et l'ajouter après le formulaire
+                                const hr = document.createElement('hr');
+                                formsetContainer.appendChild(hr);
+
+                                // Mettre à jour le nombre de formulaires dans le champ TOTAL_FORMS
+                                formCount++;
+                                document.getElementById('id_form-TOTAL_FORMS').value = formCount;
+
+                                console.log("Form count after adding new form: ", formCount);
+                            });
+
+                                // Gestion du bouton "Supprimer"
+                                formsetContainer.addEventListener('click', function(event) {
+                                    if (event.target && event.target.classList.contains('remove-casmaladie-btn')) {
+                                        const formToRemove = event.target.closest('.repeatable-casmaladie-form');
+                                        if (formToRemove) {
+                                            // Trouver l'élément <hr /> juste après le formulaire
+                                            let nextSibling = formToRemove.nextElementSibling;
+
+                                            // Si l'élément suivant est un <hr />, on le supprime
+                                            if (nextSibling && nextSibling.tagName === 'HR') {
+                                                nextSibling.remove();
+                                            }
+
+                                            formToRemove.remove();
+                                            
+                                            // Mettre à jour le nombre de formulaires après suppression
+                                            formCount--;
+                                            document.getElementById('id_form-TOTAL_FORMS').value = formCount;
+
+                                            console.log("Form count after removing form: ", formCount);
+                                        }
+                                    }
+                                });
+                            });
+
+
+
+
+
+
+
+
+            document.addEventListener('DOMContentLoaded', function() {
+                const formsetContainer = document.getElementById('cassantementale-formset-container');
+                const addButton = document.getElementById('add-cassantementale-btn');
+                
+                // Initialiser le compteur des formulaires
+                let formCount = formsetContainer.getElementsByClassName('repeatable-cassantementale-form').length;
+
+                addButton.addEventListener('click', function() {
+                    // Cloner le premier formulaire
+                    const newForm = formsetContainer.getElementsByClassName('repeatable-cassantementale-form')[0].cloneNode(true);
+                    
+                    // Mettre à jour les noms et IDs des champs pour éviter les conflits
+                    const formFields = newForm.querySelectorAll('input, select, textarea');
+                    
+                    formFields.forEach(field => {
+                        const name = field.name;
+                        const id = field.id;
+                        
+                        // Mettre à jour le nom et l'ID pour chaque champ du formulaire cloné
+                        field.name = name.replace(/-(\d+)-/, '-' + formCount + '-');
+                        field.id = id.replace(/-(\d+)-/, '-' + formCount + '-');
+                        
+                        // Mettre à jour le label 'for' avec le bon ID
+                        const label = newForm.querySelector('label[for="' + id + '"]');
+                        if (label) {
+                            label.setAttribute('for', field.id);
+                        }
+
+                        // Vider les valeurs des champs clonés
+                        if (field.type === 'number' || field.classList.contains('numeric')) {
+                            // Initialiser les champs numériques à 0
+                            field.value = 0;
+                        } else if (field.type === 'select-one') {
+                            // Réinitialiser la sélection de l'élément <select> si nécessaire
+                            field.selectedIndex = 0;  // Sélectionne la première option
+                        } else {
+                            // Pour les autres types de champs (text, textarea, etc.), on les vide
+                            field.value = '';
+                        }
+
+                        
+                    });
+                    
+                    // Supprimer l'input caché 'code_casmaladie lors de l'ajout d'un nouveau formulaire
+                    const hiddenInput = newForm.querySelector('input[name="form-' + formCount + '-code_cassantementale"]');
+                    if (hiddenInput) {
+                        hiddenInput.remove();
+                    }
+                    
+
+                    // Afficher le bouton "Supprimer" pour le formulaire cloné
+                    const removeButton = newForm.querySelector('.remove-cassantementale-btn');
+                    if (removeButton) {
+                        removeButton.style.display = 'inline-block';
+                    }
+
+                    // Ajouter le formulaire cloné dans le conteneur
+                    formsetContainer.appendChild(newForm);
+                    console.log(formsetContainer)
+                    
+                    // Créer un élément <hr /> et l'ajouter après le formulaire
+                    const hr = document.createElement('hr');
+                    formsetContainer.appendChild(hr);
+
+                    // Mettre à jour le nombre de formulaires dans le champ TOTAL_FORMS
+                    formCount++;
+                    document.getElementById('id_form-TOTAL_FORMS').value = formCount;
+
+                    console.log("Form count after adding new form: ", formCount);
+                });
+
+                    // Gestion du bouton "Supprimer"
+                    formsetContainer.addEventListener('click', function(event) {
+                        if (event.target && event.target.classList.contains('remove-cassantementale-btn')) {
+                            const formToRemove = event.target.closest('.repeatable-cassantementale-form');
+                            if (formToRemove) {
+
+                                // Trouver l'élément <hr /> juste après le formulaire
+                                let nextSibling = formToRemove.nextElementSibling;
+
+                                // Si l'élément suivant est un <hr />, on le supprime
+                                if (nextSibling && nextSibling.tagName === 'HR') {
+                                    nextSibling.remove();
+                                }
+
+                                formToRemove.remove();
+
+                                
+                                                
+                                // Mettre à jour le nombre de formulaires après suppression
+                                formCount--;
+                                document.getElementById('id_form-TOTAL_FORMS').value = formCount;
+
+                                console.log("Form count after removing form: ", formCount);
+                            }
+                        }
+                    });
+                });
+
+
+
+
+    </script>
+{% endblock %}

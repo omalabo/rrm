@@ -1,0 +1,60 @@
+{% extends "base.html" %} 
+{% load static %}
+{% load plotly_dash %}  
+{% block content %}
+
+<!-- Breadcomb area Start-->
+<div class="breadcomb-area mg-tb-40">
+	<div class="container">
+		<div class="row">
+			<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+				<div class="breadcomb-list">
+					<div class="row">
+						<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+							<div class="breadcomb-wp">
+								<div class="breadcomb-icon">
+                  <i class="notika-icon notika-house"></i>
+								</div>
+								<div class="breadcomb-ctn"> 
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- <div class="text-center">
+	<h2><span class="counter", style= font-family:Corbel>Ministère de l'Education Nationale / Primaire </span></h2>
+</div> -->
+  
+<div class="col-lg-10 col-md-3 col-sm-3 col-xs-12">
+	<div class="visitor-sv-tm-int mg-t-30">
+	</div>
+</div>
+
+
+<!-- <div class="container"> -->
+	<!-- <a class="btn btn-outline-primary" href="/educationprimairedash2" role="button" aria-pressed="true" style="font-size : 16px">Carte départementale des fréquentations</a>
+	<a class="btn btn-outline-primary" href="/educationprimairedash3" role="button" aria-pressed="true" style="font-size : 16px"> Dashboard</a> -->
+	<!-- <a class="btn btn-outline-primary" href="/educationprimairerapport" role="button" aria-pressed="true" style="font-size : 16px"> Rapport</a> -->
+<!-- </div>  -->
+
+<!-- <div class="text-center">
+	<h2><span class="counter", style= font-family:Corbel>Education primaire</span></h2>
+	<h5 style= font-family:Corbel>RapidPro</h5>
+</div> -->
+<a href="{% url 'pdfdownload' %}" class="btn btn-primary"> Télécharger le pdf </a>
+<div class="col-lg-10 col-md-3 col-sm-3 col-xs-12">
+	<div class="visitor-sv-tm-int mg-t-30">
+		<div class="{% plotly_class name='infographies3' %} card" style="height: 120%; width: 120%">
+			{% plotly_app name='infographies3' ratio=0.60 %}
+		</div>  
+	
+	</div>
+</div>
+
+
+{% endblock content %}

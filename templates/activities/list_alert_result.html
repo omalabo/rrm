@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+{% load static %}
+
+    <br>
+    <div class ="col-md">
+        <div class="text-center intro p-1 rounded shadow-lg"  style="margin-left: 10%; margin-right: 10%;"  >
+            <h3>Liste des alertes</h3>
+        </div>
+        <div class="card card-body container" style="width: 90%;">
+        
+            <form class="form-inline" action="{% url 'recherche_alerte' %}" method="post">
+                {% csrf_token %}
+                <div class="form-group mb-2 mr-1">
+                    <label for="input1" class="sr-only">Label 1</label>
+                    <select class="form-control" id="input1" name="region">
+                        <option value="">Toutes les régions</option>
+                        {% for list_region in list_regions %}
+                        <option value="{{list_region.id}}">{{list_region.get_name_display}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group mx-sm-3 mb-2 mr-1">
+                    <label for="input2" class="sr-only">Label 2</label>
+                    <select class="form-control" id="input2" name="commune">
+                        <option value="">Toutes les communes</option>
+                        {% for list_commune in list_communes %}
+                        <option value="{{list_commune.id}}">{{list_commune.get_name_display}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group mb-2 mr-3">
+                    <label for="input3" class="sr-only">Label 3</label>
+                    <select class="form-control form-control-sm" id="input3" name="acteur">
+                        <option value="">Tous les acteurs</option>
+                        {% for list_acteur in list_acteurs %}
+                        <option value="{{list_acteur.id}}">{{list_acteur.get_name_display}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary mb-2 btn-sm">Submit</button>
+            </form>
+              
+        </div>
+
+        <div class="card card-body container" style="width: 90%;">
+            <table class="table">
+                <tr>
+                    <th>Region</th>
+                    <th>Département</th>
+                    <th>Commune</th>
+                    <th>Localité</th>
+                    <th>Acteur</th>
+                    <th>Date de réception</th>
+                    <th>Détails</th>                   
+                    <th>Mettre à jour</th>                   
+                    <th>Validation</th>
+                    <th>&nbsp;</th>                    
+
+                </tr>
+                {% for alerte in alertes  %}
+                    <tr>
+                        <td>{{alerte.localite.commune.departement.region}}</td>
+                        <td>{{alerte.localite.commune.departement}}</td>
+                        <td>{{alerte.localite.commune}}</td>
+                        <td>{{alerte.localite}}</td>
+                        <td>{{alerte.acteur}}</td>
+                        <td>{{alerte.date_reception}}</td>
+
+                        
+
+                        <td><a class="btn btn-sm btn-primary" href="{% url 'alerte_detail' alerte.id %}">Détails</a></td>    
+                        
+                                {% if alerte.validation == 1 and user.last_name|lower == alerte.acteur|lower %}
+                                <td><a class="btn btn-sm btn-info" href="{% url 'alerte_update' alerte.id %}">Modifier</a></td>
+                                <td>
+                                <form method="post" action="{% url 'change_validation' alerte.id %}">
+                                        {% csrf_token %}
+                                        <button type="button" class="btn btn-success mr-1 float-left" onclick="confirmerApprobation('{{alerte.id}}')">Approuver</button>
+                                </form>
+                                <td><a class="btn btn-sm btn-danger" href="#" onclick="confirmerSuppressionAlerte('{{alerte.id}}')">Supprimer</a></td>
+                            </td>
+                              {% else %}
+                                <td><a class="btn btn-sm btn-secondary disabled" href="{% url 'alerte_update' alerte.id %}">Modifier</a></td>
+                                <td> <button type="submit" class="btn btn-secondary mr-1 float-left disabled" >Approuver</button></td>
+                                <td><a class="btn btn-sm btn-danger disabled" href="#" onclick="confirmerSuppressionAlerte('{{alerte.id}}')">Supprimer</a></td>
+
+                              {% endif %}                  
+                       
+                    </tr>
+                  
+                {% endfor %}
+
+            </table>
+
+        </div>
+
+    </div>
+    <!-- Javascript pour la confirmation . A mettre avant endblock  -->
+    <script>
+        // id = id a approuver
+        function confirmerApprobation(id) { 
+            if (confirm('Voulez-vous valider cette alerte?')) {
+                window.location.href = '/activities/change_validation/' + id
+            }
+        }
+        function confirmerSuppressionAlerte(id) { 
+            if (confirm('Voulez-vous supprimer cette alerte?\nVous ne pourrez plus annuler cette action!')) {
+                window.location.href = '/activities/alerte_delete/' + id
+            }
+        }
+    </script>
+    
+{% endblock content %}

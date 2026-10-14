@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% load static %}
+{% block content %}
+
+
+<link rel="stylesheet" href="{% static 'css/multistepform.css' %}">
+
+    <form id ="form-container" action="" method="POST">
+        {% csrf_token %}
+        {% load crispy_forms_tags %} 
+        {{ formset.management_form }}
+        {% for form in formset.forms %}
+                
+           
+                <div class="form_instance card" style="margin: 20% ; margin-top : 2%; margin-bottom: 2%" >
+                        
+                  <div style="margin: 2%"> 
+                    <h3 style="
+                    font-size: 16px;
+                    text-transform: uppercase;
+                    color: #2C3E50;
+                    margin-bottom: 10px;
+                    letter-spacing: 2px;
+                    font-weight: bold;">Positionnement des acteurs</h3>
+                                                       
+                    <table >
+                            {{ form | crispy }}
+                    </table>
+                       
+                  </div>
+                </div>          
+      
+        {% endfor %}
+        <input type="button" value="Add More" id="add-form" class="btn btn-secondary" style="margin-left:20%">  <input type="submit" value="Submit" class="btn btn-success">
+
+      
+       
+        <script>
+           
+            let birdForm = document.querySelectorAll(".form_instance")
+            let container = document.querySelector("#form-container")
+            let addButton = document.querySelector("#add-form")
+            let totalForms = document.querySelector("#id_form-TOTAL_FORMS")
+            console.log(totalForms)
+
+            let formNum = birdForm.length-1 // Get the number of the last form on the page with zero-based indexing
+            addButton.addEventListener('click', addForm)
+            function addForm(e) {
+                e.preventDefault()
+
+                let newForm = birdForm[0].cloneNode(true) //Clone the bird form
+                let formRegex = RegExp(`form-(\\d){1}-`,'g') //Regex to find all instances of the form number
+
+                formNum++ //Increment the form number
+                newForm.innerHTML = newForm.innerHTML.replace(formRegex, `form-${formNum}-`) //Update the new form to have the correct form number
+                container.insertBefore(newForm, addButton) //Insert the new form at the end of the list of forms
+
+                totalForms.setAttribute('value', `${formNum+1}`) //Increment the number of total forms in the management form
+    }
+
+
+        </script>
+    </form>
+{% endblock content %}
+    

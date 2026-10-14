@@ -1,0 +1,311 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+{% load static %}
+
+ <!--Oumarou labo 31 Mai ajouter style -->
+<style>
+  .table-responsive {
+    overflow-x: auto;
+}
+
+.table {
+    width: 100%;
+    table-layout: fixed;
+}
+
+.card.card-body.container {
+    width: 100%;
+    max-width: 75%;
+}
+
+.table-header {
+     /* Empêche le texte de passer à la ligne */
+    font-size: 0.9vw; /* Taille de la police */
+}
+
+
+
+</style>
+    <br>
+    <div class ="col-md">
+      <!--Oumarou labo 31 Mai ajouter p-1 rounded shadow-lg style="margin-left: 13%; margin-right: 13%;"-->
+        <div class="text-center intro p-1 rounded shadow-lg"  style="margin-left: 13%; margin-right: 13%;"   >
+            <h3>Liste des alertes</h3>
+        </div>
+        <div class="card card-body container" style="width: 90%;">
+        
+          
+            <form class="form-inline" action="{% url 'recherche_alerte' %}" method="get">
+                {% csrf_token %}
+                <div class="form-group mb-2 mr-1">
+                    <label for="input1" class="sr-only">Label 1</label>
+                    <select class="form-control" id="input1" name="region" 
+                    onchange="document.getElementById('region').value = this.value">
+                        <option value="">Toutes les régions</option>
+                        {% for list_region in list_regions %}
+                        <option value="{{list_region.id}}" {% if list_region.id == values.region|add:0 %}selected{% endif %}>{{list_region.get_name_display}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group mx-sm-3 mb-2 mr-1">
+                    <label for="input2" class="sr-only">Label 2</label>
+                    <select class="form-control" id="input2" name="commune" 
+                    onchange="document.getElementById('commune').value = this.value">
+                        <option value="">Toutes les communes</option>
+                        {% for list_commune in list_communes %}
+                        <option value="{{list_commune.id}}" {% if list_commune.id == values.commune|add:0 %}selected{% endif %}>{{list_commune.get_name_display}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group mb-2 mr-3">
+                    <label for="input3" class="sr-only">Label 3</label>
+                    <select class="form-control form-control-sm" id="input3" name="acteur"
+                    onchange="document.getElementById('acteur').value = this.value">
+                        <option value="">Tous les acteurs</option>
+                        {% for list_acteur in list_acteurs %}
+                        <option value="{{list_acteur.id}}" {% if list_acteur.id == values.acteur %}selected{% endif %}>{{list_acteur.get_name_display}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <button type="submit" class="btn btn-primary mb-2 btn-sm">Recherche</button>
+                <a href="{% url 'list_alert'%}" class="btn btn-secondary mb-2 ml-2 btn-sm">Initialiser</a>
+                <!-- Telecharger -->
+                <div class="dropdown">
+                  <button class="btn btn-success mb-2 ml-2 btn-sm dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Télécharger
+                  </button>
+                  <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                    <!-- {% url 'telecharger_alerte_excel'%} -->
+                    <a class="dropdown-item" href="#" onclick="telechargerAlerte(1)">Format EXCEL</a>
+                    <a class="dropdown-item" href="#" onclick="telechargerAlerte(2)">Format CSV</a>
+                  </div>
+                </div>
+             <!-- Telechager -->
+            </form>
+            <!-- Telechager 2-->
+            <form action="{%url 'telecharger_alerte'%}" id="formtelechargeralerte" method="post" class="d-none">
+              {%csrf_token%}
+              <input type="text" name="region" id="region">
+              <input type="text" name="commune" id="commune">
+              <input type="text" name="acteur" id="acteur">
+              <input type="text" name="typefichier" id="typefichier">
+              <!-- Telechager 2-->
+            </form>       
+
+        </div>
+        <!--Oumarou labo 31 Mai ajouter table-responsive" style="width: 100%; "-->
+        <div class="card card-body container table-responsive" style="width: 100%;">
+          <!--Oumarou labo 31 Mai ajouter  table-responsive table-striped table-bordered w-100 "-->
+            <table class="table table-responsive table-striped table-bordered w-100" >
+                <tr>
+
+                  <!--Oumarou labo 31 Mai ajouter  style="white-space: nowrap;" class="table-header" "-->
+                    <th style="white-space: nowrap;" class="table-header">Region</th>
+                    <th style="white-space: nowrap;" class="table-header">Département</th>
+                    <th style="white-space: nowrap;" class="table-header">Commune</th>
+                    <th  style="white-space: nowrap;" class="table-header">Localité</th>
+                    <th style="white-space: nowrap;" class="table-header">Acteur</th>
+                    <th class="table-header">Date confirmation</th>
+                    <th class="table-header">Date réception</th>
+                    <!--ajout oumarou labo 16 Mai 2024####-->
+                    <th style="white-space: nowrap;" class="table-header">Statut</th>
+                    <!--ajout oumarou labo 16 Mai 2024####-->
+                    <th style="white-space: nowrap;" class="table-header">Détails</th>                   
+                    <th style="white-space: nowrap;" class="table-header">Mise à jour</th>                   
+                    <th style="white-space: nowrap;"class="table-header">Validation</th>
+                    <th class="table-header">Action</th>                    
+
+                </tr>
+              
+                {% for alerte in alertes  %}
+                    <tr>
+                        <td class="table-header">{{alerte.localite.commune.departement.region}}</td>
+                        <td class="table-header">{{alerte.localite.commune.departement}}</td>
+                        <td class="table-header">{{alerte.localite.commune}}</td>
+                        <td class="table-header">{{alerte.localite}}</td>
+                        <td class="table-header">{{alerte.acteur}}</td>
+                        <td class="table-header">{{alerte.date_confirmation}}</td>
+                        <td class="table-header">{{alerte.date_reception}}</td>
+                        <!--ajout oumarou labo 16 Mai 2024####-->
+                        <td class="table-header">{{ alerte.get_validation_display }}</td>
+                        <!--ajout oumarou labo 16 Mai 2024####-->
+                        <td ><a class="btn btn-sm btn-primary" href="{% url 'alerte_detail' alerte.id %}">Afficher</a></td>    
+                        
+                                {% if alerte.validation == 1 and user.last_name|lower == alerte.acteur|lower  %}
+                                <td><a class="btn btn-sm btn-info" href="{% url 'alerte_update' alerte.id %}">Modifier</a></td>
+                                <td>
+                                <form method="post" action="{% url 'change_validation' alerte.id %}">
+                                        {% csrf_token %}
+                                        <!--oumarou labo 31 Mai 2024-->
+                                        <button type="button" class="btn btn-success btn-sm" onclick="confirmerApprobation('{{alerte.id}}')">Approuver</button>
+                                         <!--oumarou labo 31 Mai 2024-->
+                                </form>
+                                <td><a class="btn btn-sm btn-danger" href="#" onclick="confirmerSuppressionAlerte('{{alerte.id}}')">Supprimer</a></td>
+                            </td>
+                              {% else %}
+                                <td><a class="btn btn-sm btn-secondary disabled" href="{% url 'alerte_update' alerte.id %}">Modifier</a></td>
+                                 <!--oumarou labo 31 Mai 2024-->
+                                <td> <button type="submit" class="btn btn-secondary float-left disabled btn-sm" >Approuver</button></td>
+                                 <!--oumarou labo 31 Mai 2024-->
+                                <td><a class="btn btn-sm btn-danger disabled" href="#" onclick="confirmerSuppressionAlerte('{{alerte.id}}')">Supprimer</a></td>
+
+                              {% endif %}                  
+                       
+                    </tr>
+                  
+                {% endfor %}
+
+            </table>
+            <!-- Pagination -->
+            <div class="row">
+                <div class="col-md-12">
+                  {% if alertes.has_other_pages %}
+                    <ul class="pagination">
+                      {% if alertes.has_previous %}
+                        <li class="page-item">
+                          <a href="?page={{ alertes.previous_page_number }}&commune={{values.commune}}&region={{values.region}}&acteur={{values.acteur}}" class="page-link">&laquo;</a>
+                        </li>
+                      {% else %}
+                        <li class="page-item disabled">
+                          <a class="page-link">&laquo;</a>
+                        </li>
+                      {% endif %}
+                      {% for i in alertes.paginator.page_range %}
+                        {% if alertes.number == i %}
+                          <li class="page-item active">
+                            <a  class="page-link">{{i}}</a>
+                          </li>
+                        {% else %}
+                          <li class="page-item">
+                            <a href="?page={{i}}&commune={{values.commune}}&region={{values.region}}&acteur={{values.acteur}}" class="page-link">{{i}}</a>
+                          </li>
+                        {% endif %}
+                      {% endfor %}
+                      {% if alertes.has_next %}
+                        <li class="page-item">
+                          <a href="?page={{ alertes.next_page_number }}&commune={{values.commune}}&region={{values.region}}&acteur={{values.acteur}}" class="page-link">&raquo;</a>
+                        </li>
+                      {% else %}
+                        <li class="page-item disabled">
+                          <a class="page-link">&raquo;</a>
+                        </li>
+                      {% endif %}
+                    </ul>
+                  {% endif %}
+                </div>
+            <!-- Pagination -->
+           </div>
+
+    </div>
+    <!-- Javascript pour la confirmation . A mettre avant endblock  -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        // id = id a approuver
+        // function confirmerApprobation(id) { 
+        //     if (confirm('Voulez-vous valider cette alerte?')) {
+        //         window.location.href = '/activities/change_validation/' + id
+        //     }
+        // }
+
+        // function confirmerSuppressionAlerte(id) { 
+        //     if (confirm('Voulez-vous supprimer cette alerte?\nVous ne pourrez plus annuler cette action!')) {
+        //         window.location.href = '/activities/alerte_delete/' + id
+        //     }
+        // }
+        function telechargerAlerte(idAlerte) {
+          // document.getElementById('typefichier').value = idAlerte
+          $('#typefichier').val(idAlerte)
+          document.getElementById('formtelechargeralerte').submit()
+        }
+        $(function(){
+          $('#region').val($('#input1').val())
+          $('#commune').val($('#input2').val())
+          $('#acteur').val($('#input3').val())
+        })
+
+
+
+
+        function confirmerApprobation(id) { 
+            
+
+            Swal.fire({
+                        title: "<strong>Approbation </strong>",
+                        icon: "question",
+                        html: `
+                        Êtes-vous sûr(e) de vouloir approuver l'alerte ?
+                        `,
+                        showCloseButton: true,
+                        showDenyButton: true,
+                        focusConfirm: false,
+                        confirmButtonText: `
+                        <i class="fa fa-thumbs-up"></i> Oui!
+                        `,
+                        confirmButtonAriaLabel: "Thumbs up, great!",
+                        denyButtonText: `
+                        <i class="fa fa-thumbs-down"></i> Non!
+                        `,
+
+                        }).then((result) => {
+
+                        /* Read more about isConfirmed, isDenied below */
+                        if (result.isConfirmed) {
+                                
+                                Swal.fire("Alerte approuvée!", "", "success").then(() => {
+                                                        // Rediriger ou faire d'autres actions après la confirmation
+                                                        window.location.href = '/activities/change_validation/' + id
+                                                });
+                                } 
+                        else if (result.isDenied) {
+                                      
+                                        Swal.fire("Alerte non approuvée", "", "info");
+                                }
+
+                        });
+                }
+
+
+                function confirmerSuppressionAlerte(id) { 
+            
+
+                Swal.fire({
+                            title: "<strong>suppression  </strong>",
+                            icon: "question",
+                            html: `
+                            Êtes-vous sûr(e) de vouloir supprimer l'alerte ?
+                            `,
+                            showCloseButton: true,
+                            showDenyButton: true,
+                            focusConfirm: false,
+                            confirmButtonText: `
+                            <i class="fa fa-thumbs-up"></i> Oui!
+                            `,
+                            confirmButtonAriaLabel: "Thumbs up, great!",
+                            denyButtonText: `
+                            <i class="fa fa-thumbs-down"></i> Non!
+                            `,
+
+                            }).then((result) => {
+
+                            /* Read more about isConfirmed, isDenied below */
+                            if (result.isConfirmed) {
+                                    Swal.fire("Alerte supprimée!", "", "success").then(() => {
+                                                        // Rediriger ou faire d'autres actions après la confirmation
+                                                        window.location.href = '/activities/alerte_delete/' + id
+                                                });
+                                    
+                                    } 
+                            
+
+                            });
+                    }
+
+
+
+
+    </script>
+    
+{% endblock content %}

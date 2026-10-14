@@ -1,0 +1,508 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+
+
+ {% load static %}
+
+<style>
+    .material-icons {
+    font-family: 'Material Icons';
+    font-weight: normal;
+    font-style: normal;
+    font-size: 24px;  /* Preferred icon size */
+    display: inline-block;
+    line-height: 1;
+    text-transform: none;
+    letter-spacing: normal;
+    word-wrap: normal;
+    white-space: nowrap;
+    direction: ltr;
+
+    /* Support for all WebKit browsers. */
+    -webkit-font-smoothing: antialiased;
+    /* Support for Safari and Chrome. */
+    text-rendering: optimizeLegibility;
+
+    /* Support for Firefox. */
+    -moz-osx-font-smoothing: grayscale;
+
+    /* Support for IE. */
+    font-feature-settings: 'liga';
+    }
+</style>
+
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+ <link rel="stylesheet" href="{% static 'css/alerte_detail.css' %}">
+
+<!-- Autoriser la modification uniquement lorsque l'élement n'est pas validé-->
+<!--oummarou labo mb-2-->
+
+
+
+<div class="container " style="margin-bottom: 20px;">
+
+    <a class="btn btn-secondary mb-2" style="margin-left: 5%" href=" {% url 'alerte_detail' evaluationsante.alerte.id  %}">Retour à l'alerte</a>
+     {% if user.last_name|lower == evaluationsante.acteur|lower %}
+    <a class="btn btn-success" href="{% url 'evaluation_sante_update' evaluationsante.id %}">Modifier</a>
+     {% endif %}
+    <!-- <a class="btn btn-primary" href="{% url 'intervention_rapide_init_sante' evaluationsante.id %}" >Ajouter une action rapide de santé</a>
+                         -->
+    <div class="row" style="margin-right: 30px; padding-bottom: 20px;">
+        <div class="col-xs-12 col-md-6"> 
+                <div class="card">
+                        <h3 class="text-center">Informations générales </h3>
+                        <!--Oumarou labo ajout de style="margin-right: 30px; margin-bottom: 20px;"-->
+                        <ul class="list-group-striped" style="margin-right: 30px; margin-bottom: 20px;">
+
+                                <li class="list-group-item">
+                                    <p><strong>Alerte : </strong>{{ evaluationsante.alerte }}</p>
+                                </li>
+
+                                <li class="list-group-item">
+                                    <p><strong>Acteur : </strong>{{ evaluationsante.acteur }}</p>
+                                </li>
+
+                                <li class="list-group-item">
+                                    <p><strong>Zone enquête : </strong>{{ evaluationsante.zone_enquete }}</p>
+                                </li>
+
+                                <li class="list-group-item">
+                                    <p><strong>Nom du médecin/infirmier : </strong>{{ evaluationsante.nom_medecin_infirmier }}</p>
+                                </li>
+                                <li class="list-group-item">
+                                    <p><strong>Date de l'enquête : </strong>{{ evaluationsante.date_enquete }}</p>
+                                </li>
+                                <li class="list-group-item">
+                                    <p><strong>Téléphone : </strong>{{ evaluationsante.telephone }}</p>
+                                </li>
+                                
+                        </ul>
+
+                </div>
+                
+        </div>
+
+        <div class="col-xs-12 col-md-6"> 
+            <div class="card">
+                <h3 class="text-center">Informations sur la structure de santé</h3>
+                <ul class="list-group-striped" style="margin-right: 30px; margin-bottom: 20px;">
+                    <li class="list-group-item">
+                        <p><strong>Régions : </strong>{{ evaluationsante.prefecture_sante }}</p>
+                    </li>
+                    <li class="list-group-item">
+                        <p><strong>Départements : </strong>{{ evaluationsante.sous_prefecture_sante }}</p>
+                    </li>
+                    <li class="list-group-item">
+                        <p><strong>Aire de santé : </strong>{{ evaluationsante.aire_sante }}</p>
+                    </li>
+                    <li class="list-group-item">
+                        <p><strong>Nom de la structure de santé : </strong>{{ evaluationsante.nom_structure_sante }}</p>
+                    </li>
+                    <li class="list-group-item">
+                        <p><strong>Population couvertes : </strong>{{ evaluationsante.population_couverte }}</p>
+                    </li>
+                    <li class="list-group-item">
+                        <p><strong>Population déplacées : </strong>{{ evaluationsante.population_deplaces }}</p>
+                    </li>
+                    <li class="list-group-item">
+                        <p><strong>Date de recensement : </strong>{{ evaluationsante.date_recensement }}</p>
+                    </li>
+
+
+                    <li class="list-group-item">
+                        <p><strong>type de structure de santé : </strong>{{ evaluationsante.type_structure_sante }}</p>
+                    </li>
+                    
+                    <li class="list-group-item">
+                        <p><strong>statut de la structure de santé : </strong>{{ evaluationsante.statut_structure_sante }}</p>
+                    </li>
+
+                    <li class="list-group-item">
+                        <p><strong>latitude : </strong>{{ evaluationsante.coord_geo_lat }} {{ evaluationsante.lat_direction }}</p>
+                    </li>
+
+                    <li class="list-group-item">
+                        <p><strong>longitude : </strong>{{ evaluationsante.coord_geo_lon }} {{ evaluationsante.lon_direction }}</p>
+                    </li>
+
+                    <li class="list-group-item">
+                        <p><strong># Cases santé dans l'air de santé : </strong>{{ evaluationsante.nbr_cases_sante_dans_air_sante }}</p>
+                    </li>
+
+                    <li class="list-group-item">
+                        <p><strong>service maternité accessible : </strong>{{ evaluationsante.get_service_maternite_operationnel_accessible_display }}</p>
+                    </li>
+
+
+                    <li class="list-group-item">
+                        <p><strong>problèmes du service maternité: </strong>{{ evaluationsante.probleme_service_maternite_operationnel_accessible }}</p>
+                    </li>
+
+
+                    <li class="list-group-item">
+                        <p><strong>localisation service maternité : </strong>{{ evaluationsante.localisation_service_maternite_operationnel_accessible }}</p>
+                    </li>
+
+
+                </ul>
+            </div>
+        </div>
+
+        <div class="col-xs-12 col-md-12"> 
+            <div class="card">
+                <h3 class="text-center">Personnel et etat de la structure de santé</h3>
+                <ul class="list-group-striped" style="margin-right: 30px; margin-bottom: 20px;">
+                    <h4 class="text-center">Informations génerale sur la structure de santé</h4>
+                    <li class="list-group-item">
+                        <p><strong>État de la structure : </strong>{{ evaluationsante.etat_structure_sante }}</p>
+                    </li>
+                    <li class="list-group-item">
+                        <p><strong>Total personnel : </strong>{{ evaluationsante.effectif_personnel_total }}</p>
+                    </li>
+                    <li class="list-group-item">
+                        <p><strong>Total personnel femmes : </strong>{{ evaluationsante.effectif_personnel_femmes }}</p>
+                    </li>
+                    <li class="list-group-item">
+                        <p><strong>Total personnel hommes : </strong>{{ evaluationsante.effectif_personnel_hommes }}</p>
+                    </li>
+                   
+
+                </ul>
+
+                <ul class="list-group-striped" style="margin-right: 30px; margin-bottom: 20px;">
+                    <h4 class="text-center">Informations sur le personnel de la structure de santé</h4>
+                    {% for effectif in effectif_list %}
+                        <li class="list-group-item">
+                            <p><strong>Type personnel : </strong>{{ effectif.type_personnel }}</p>
+                            <p><strong>Total personnel : </strong>{{ effectif.total_personnel }}</p>
+                            <p><strong>Total hommes : </strong>{{ effectif.total_hommes_effectif }}</p>
+                            <p><strong>Total femmes: </strong>{{ effectif.total_femmes_effectif }}</p>
+                        </li>
+                    {% empty %}
+                        <li class="list-group-item">Aucune morbidité disponible pour cette évaluation.</li>
+                    {% endfor %}
+                </ul>
+
+                <ul class="list-group-striped" style="margin-right: 30px; margin-bottom: 20px;">
+                    <h4 class="text-center">Informations sur le dispostif(lits, sanitaires) de la structure de santé</h4>
+                    <li class="list-group-item">
+                        <p><strong># Lits : </strong>{{ evaluationsante.lits_structure_sante }}</p>
+                    </li>
+                    <li class="list-group-item">
+                        <p><strong>Disponibilité de points d'approvisionnement : </strong>{{ evaluationsante.points_approvisionnement }}</p>
+                    </li>
+                    <li class="list-group-item">
+                        <p><strong># Latrines hygiéniques : </strong>{{ evaluationsante.nbre_latrines_hygieniques }}</p>
+                    </li>
+                    <li class="list-group-item">
+                        <p><strong>Disponibilité de soins gratuits pour déplacés (catégories vulnérables) : </strong>{{ evaluationsante.soins_gatruit_deplaces_categories_vulnerable }}</p>
+                    </li>
+                   
+
+                </ul>
+
+            </div>
+        </div>
+
+
+        <div class="col-xs-12 col-md-6">
+            <div class="card">
+                <h3 class="text-center">Assistance et Organisation</h3>
+               
+        
+                <!-- Affichage de la liste des assistances -->
+                <h4 class="text-center">Détails des Assistances</h4>
+                <ul class="list-group-striped" style="margin-right: 30px; margin-bottom: 20px;">
+                    {% for assistance in assistance_list %}
+                        <li class="list-group-item">
+                            <p><strong>Assistance : </strong>{{ assistance.assistance }}</p>
+                            <p><strong>Organisation : </strong>{{ assistance.organisation }}</p>
+                            <p><strong>Période : </strong>{{ assistance.periode }}</p>
+                            <p><strong>Type de période : </strong>{{ assistance.type_periode }}</p>
+                            <p><strong>Type d'assistance : </strong>{{ assistance.type_assistance }}</p>
+                            <p><strong>Assistance ponctuelle : </strong>{{ assistance.assistance_ponctuelle }}</p>
+                            <p><strong>Commentaires : </strong>{{ assistance.commentaires }}</p>
+                        </li>
+                    {% empty %}
+                        <li class="list-group-item">Aucune assistance disponible pour cette évaluation.</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+        
+
+
+        <div class="col-xs-12 col-md-6"> 
+            <div class="card">
+                <h3 class="text-center">VIH Prévention</h3>
+                <ul class="list-group-striped" style="margin-right: 30px; margin-bottom: 20px;">
+                    <li class="list-group-item">
+                        <p><strong>Kits PEP disponibles : </strong>{{ evaluationsante.get_kits_pep_display }}</p>
+                    </li>
+                    <li class="list-group-item">
+                        <p><strong>Tests VIH effectués : </strong>{{ evaluationsante.get_tests_vih_display }}</p>
+                    </li>
+                    <li class="list-group-item">
+                        <p><strong>Conduite prévention mère-enfant : </strong>{{ evaluationsante.get_conduite_prevention_mere_enfant_display }}</p>
+                    </li>
+                    <li class="list-group-item">
+                        <p><strong>Personnel formé pour PEP : </strong>{{ evaluationsante.get_personnel_forme_pep_display }}</p>
+                    </li>
+                    <li class="list-group-item">
+                        <p><strong>Cas de violence sexuelle (3 derniers mois) : </strong>{{ evaluationsante.get_cas_violence_sexuelle_3mois_display }}</p>
+                    </li>
+                    <li class="list-group-item">
+                        <p><strong>Nombre de cas de violence sexuelle : </strong>{{ evaluationsante.cas_violence_sexuelle_nombre }}</p>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+
+        <div class="col-xs-12 col-md-6">
+            <div class="card">
+                <h3 class="text-center">Données de cconsultation et population couverte</h3>
+                <ul class="list-group-striped" style="margin-right: 30px; margin-bottom: 20px;">
+                    <li class="list-group-item">
+                        <p><strong>Population totale couvertes(0 à 5km) : </strong>{{ evaluationsante.population_total_couverte }}</p>
+                    </li>
+                    <li class="list-group-item">
+                        <p><strong>Population déplacées vaccinées : </strong>{{ evaluationsante.population_deplace_couverte }}</p>
+                    </li>
+                    <li class="list-group-item">
+                        <p><strong>Temps observé (jours) : </strong>{{ evaluationsante.temps_observe }}</p>
+                    </li>
+                    <li class="list-group-item">
+                        <p><strong>Total consultés : </strong>{{ evaluationsante.total_consultant }}</p>
+                    </li>
+                    <li class="list-group-item">
+                        <p><strong>Consultations - population générale : </strong>{{ evaluationsante.nombre_consultation_population_general }}</p>
+                    </li>
+                    <li class="list-group-item">
+                        <p><strong>Consultations - population moins de 5 ans : </strong>{{ evaluationsante.nombre_consultation_population_moins_5 }}</p>
+                    </li>
+                    <li class="list-group-item">
+                        <p><strong>Consultations - population déplacée : </strong>{{ evaluationsante.nombre_consultation_population_deplace }}</p>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="col-xs-12 col-md-6">
+            <div class="card">
+                <h3 class="text-center">Vaccination - Données Population</h3>
+                <ul class="list-group-striped" style="margin-right: 30px; margin-bottom: 20px;">
+                    <li class="list-group-item">
+                        <p><strong>Population couverte vaccinée : </strong>{{ evaluationsante.population_total_couverte_vaccine }}</p>
+                    </li>
+                    <li class="list-group-item">
+                        <p><strong>Population déplacée vaccinée : </strong>{{ evaluationsante.population_deplace_couverte_vaccine }}</p>
+                    </li>
+                    <li class="list-group-item">
+                        <p><strong>Enfants vaccinés (Penta3 - Population générale) : </strong>{{ evaluationsante.nombre_enfant_vaccine_population_general_penta3 }}</p>
+                    </li>
+                    <li class="list-group-item">
+                        <p><strong>Enfants vaccinés (Penta3 - Population déplacée) : </strong>{{ evaluationsante.nombre_enfant_vaccine_population_deplace_penta3 }}</p>
+                    </li>
+                    <li class="list-group-item">
+                        <p><strong>Enfants vaccinés (Var - Population générale) : </strong>{{ evaluationsante.nombre_enfant_vaccine_population_general_var }}</p>
+                    </li>
+                    <li class="list-group-item">
+                        <p><strong>Enfants vaccinés (Var - Population déplacée) : </strong>{{ evaluationsante.nombre_enfant_vaccine_population_deplace_var }}</p>
+                    </li>
+                    <li class="list-group-item">
+                        <p><strong>Enfants vaccinés (Polio - Population générale) : </strong>{{ evaluationsante.nombre_enfant_vaccine_population_general_polio }}</p>
+                    </li>
+                    <li class="list-group-item">
+                        <p><strong>Enfants vaccinés (Polio - Population déplacée) : </strong>{{ evaluationsante.nombre_enfant_vaccine_population_deplace_polio }}</p>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        
+
+        <div class="col-xs-12 col-md-12">
+            <div class="card">
+                <h3 class="text-center">Morbidité</h3>
+                 <!-- Affichage de la liste des assistances -->
+                 <h4 class="text-center">Détails</h4>
+                 <ul class="list-group-striped" style="margin-right: 30px; margin-bottom: 20px;">
+                     {% for morbidite in morbidite_list %}
+                         <li class="list-group-item">
+                             <p><strong>Maladie : </strong>{{ morbidite.type_maladie }}</p>
+                             <p><strong>Total personnes : </strong>{{ morbidite.total_personnes }}</p>
+                             <p><strong>Total hommes : </strong>{{ morbidite.total_hommes }}</p>
+                             <p><strong>Total femmes: </strong>{{ morbidite.total_femmes }}</p>
+                             <p><strong>Total filles -5 ans : </strong>{{ morbidite.total_filles_moins_5 }}</p>
+                             <p><strong>Total garçons -5 ans : </strong>{{ morbidite.total_garcons_moins_5 }}</p>
+                         </li>
+                     {% empty %}
+                         <li class="list-group-item">Aucune morbidité disponible pour cette évaluation.</li>
+                     {% endfor %}
+                 </ul>
+            </div>
+        </div>
+
+        <div class="col-xs-12 col-md-12">
+            <div class="card">
+                <h3 class="text-center">Médicaments</h3>
+                 <!-- Affichage de la liste des assistances -->
+                 <h4 class="text-center">Détails</h4>
+                 <ul class="list-group-striped" style="margin-right: 30px; margin-bottom: 20px;">
+                     {% for medicamentevaluation in medicamentevaluation_list %}
+                         <li class="list-group-item">
+                             <p><strong>Maladie : </strong>{{ medicamentevaluation.type_maladie_evaluation }}</p>
+                             <p><strong>Mois: </strong>{{ medicamentevaluation.mois }}</p>
+                             <p><strong># jours : </strong>{{ medicamentevaluation.nbre_jour }}</p>
+                         </li>
+                     {% empty %}
+                         <li class="list-group-item">Aucun médicament disponible pour cette évaluation.</li>
+                     {% endfor %}
+                 </ul>
+            </div>
+        </div>
+
+
+        <div class="col-xs-12 col-md-12">
+            <div class="card">
+                <h3 class="text-center">Nutrition</h3>
+        
+                <div class="row" style="margin-right: 30px; padding-bottom: 20px;">
+                    <!-- Partie 1 : CRENAM -->
+                    <div class="col-xs-12 col-md-4">
+                        <h4>CRENAM</h4>
+                        <ul class="list-group-striped">
+                            <li class="list-group-item">
+                                <p><strong>CRENAM présent : </strong>{{ evaluationsante.get_crenam_present_display }}</p>
+                            </li>
+                            <li class="list-group-item">
+                                <p><strong>CRENAM fonctionnel : </strong>{{ evaluationsante.get_crenam_fonctionnel_display }}</p>
+                            </li>
+                            <li class="list-group-item">
+                                <p><strong>CRENAM admissions : </strong>{{ evaluationsante.crenam_admissions }}</p>
+                            </li>
+                            <li class="list-group-item">
+                                <p><strong>CRENAM taux de guérison : </strong>{{ evaluationsante.crenam_taux_guerison }}</p>
+                            </li>
+                            <li class="list-group-item">
+                                <p><strong>CRENAM taux d'abandon : </strong>{{ evaluationsante.crenam_taux_abandon }}</p>
+                            </li>
+                            <li class="list-group-item">
+                                <p><strong>CRENAM taux de décès : </strong>{{ evaluationsante.crenam_taux_deces }}</p>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <!-- Partie 2 : CRENAS -->
+                    <div class="col-xs-12 col-md-4">
+                        <h4>CRENAS</h4>
+                        <ul class="list-group-striped">
+                            <li class="list-group-item">
+                                <p><strong>CRENAS présent : </strong>{{ evaluationsante.get_crenas_present_display }}</p>
+                            </li>
+                            <li class="list-group-item">
+                                <p><strong>CRENAS fonctionnel : </strong>{{ evaluationsante.get_crenas_fonctionnel_display }}</p>
+                            </li>
+                            <li class="list-group-item">
+                                <p><strong>CRENAS admissions : </strong>{{ evaluationsante.crenas_admissions }}</p>
+                            </li>
+                            <li class="list-group-item">
+                                <p><strong>CRENAS admissions Marasme : </strong>{{ evaluationsante.crenas_admissions_marasme }}</p>
+                            </li>
+                            <li class="list-group-item">
+                                <p><strong>CRENAS taux de guérison : </strong>{{ evaluationsante.crenas_taux_guerison }}</p>
+                            </li>
+                            <li class="list-group-item">
+                                <p><strong>CRENAS taux d'abandon : </strong>{{ evaluationsante.crenas_taux_abandon }}</p>
+                            </li>
+                            <li class="list-group-item">
+                                <p><strong>CRENAS taux de décès : </strong>{{ evaluationsante.crenas_taux_deces }}</p>
+                            </li>
+                        </ul>
+                    </div>
+        
+                    <!-- Partie 3 : CRÉNI -->
+                    <div class="col-xs-12 col-md-4">
+                        <h4>CRÉNI</h4>
+                        <ul class="list-group-striped">
+                            <li class="list-group-item">
+                                <p><strong>CRÉNI présent : </strong>{{ evaluationsante.get_creni_present_display }}</p>
+                            </li>
+                            <li class="list-group-item">
+                                <p><strong>CRÉNI fonctionnel : </strong>{{ evaluationsante.get_creni_fonctionnel_display }}</p>
+                            </li>
+                            <li class="list-group-item">
+                                <p><strong>CRÉNI transferts : </strong>{{ evaluationsante.creni_transferts }}</p>
+                            </li>
+                            <li class="list-group-item">
+                                <p><strong>CRÉNI taux de traitées avec succès : </strong>{{ evaluationsante.creni_taux_guerison }}</p>
+                            </li>
+                            <li class="list-group-item">
+                                <p><strong>CRÉNI taux d'abandon : </strong>{{ evaluationsante.creni_taux_abandon }}</p>
+                            </li>
+                            <li class="list-group-item">
+                                <p><strong>CRÉNI taux de décès : </strong>{{ evaluationsante.creni_taux_deces }}</p>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+        
+                <div class="row" style="margin-right: 30px; padding-bottom: 20px;">
+                    <!-- Partie 4 : Relais communautaires -->
+                    <div class="col-xs-12 col-md-4">
+                        <h4>Relais communautaires</h4>
+                        <ul class="list-group-striped">
+                            <li class="list-group-item">
+                                <p><strong>Relais communautaires fonctionnels : </strong>{{ evaluationsante.get_relais_communautaires_fonctionnels_display }}</p>
+                            </li>
+                            <li class="list-group-item">
+                                <p><strong>Relais communautaires MAS : </strong>{{ evaluationsante.relais_communautaires_MAS }}</p>
+                            </li>
+                            <li class="list-group-item">
+                                <p><strong>Relais communautaires MAM : </strong>{{ evaluationsante.relais_communautaires_MAM }}</p>
+                            </li>
+                            <li class="list-group-item">
+                                <p><strong>Relais communautaires sains : </strong>{{ evaluationsante.relais_communautaires_Sains }}</p>
+                            </li>
+                        </ul>
+                    </div>
+        
+                    <!-- Partie 5 : Dépistage systématique -->
+                    <div class="col-xs-12 col-md-4">
+                        <h4>Dépistage systématique</h4>
+                        <ul class="list-group-striped">
+                            <li class="list-group-item">
+                                <p><strong>Dépistage systématique fonctionnel : </strong>{{ evaluationsante.get_depistage_pediatrique_fonctionnel_display }}</p>
+                            </li>
+                            <li class="list-group-item">
+                                <p><strong>Dépistage systématique MAS : </strong>{{ evaluationsante.depistage_pediatrique_MAS }}</p>
+                            </li>
+                            <li class="list-group-item">
+                                <p><strong>Dépistage systématique MAM : </strong>{{ evaluationsante.depistage_pediatrique_MAM }}</p>
+                            </li>
+                            <li class="list-group-item">
+                                <p><strong>Dépistage systématique sains : </strong>{{ evaluationsante.depistage_pediatrique_Sains }}</p>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+        
+            </div>
+        </div>
+        
+
+
+
+
+
+
+
+    </div>
+
+</div>
+ 
+    
+{% endblock content %}

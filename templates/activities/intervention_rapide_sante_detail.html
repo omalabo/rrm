@@ -1,0 +1,241 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+{% load static %}
+
+<style>
+    .material-icons {
+        font-family: 'Material Icons';
+        font-weight: normal;
+        font-style: normal;
+        font-size: 24px;  /* Preferred icon size */
+        display: inline-block;
+        line-height: 1;
+        text-transform: none;
+        letter-spacing: normal;
+        word-wrap: normal;
+        white-space: nowrap;
+        direction: ltr;
+
+        /* Support for all WebKit browsers. */
+        -webkit-font-smoothing: antialiased;
+        /* Support for Safari and Chrome. */
+        text-rendering: optimizeLegibility;
+
+        /* Support for Firefox. */
+        -moz-osx-font-smoothing: grayscale;
+
+        /* Support for IE. */
+        font-feature-settings: 'liga';
+    }
+</style>
+
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<link rel="stylesheet" href="{% static 'css/alerte_detail.css' %}">
+
+<div class="container" style="margin-bottom: 20px;">
+
+    <a class="btn btn-secondary mb-2" style="margin-left: 5%" href=" {% url 'list_intervention_sante'  %}">Retour à la liste</a>
+     {% if user.last_name|lower == interventionrapideSante.acteur|lower %}
+    <a class="btn btn-success" href="{% url 'intervention_rapide_update_sante' interventionrapideSante.id %}">Modifier</a>
+     {% endif %}
+
+    <div class="row" style="margin-right: 30px; padding-bottom: 20px;">
+
+        <div class="col-xs-12 col-md-12">
+            <div class="card">
+                <h3 class="text-center">Information génerale</h3>
+                <ul class="list-group-striped" style="margin-right: 30px; margin-bottom: 20px;">
+                    <li class="list-group-item">
+                        <p><strong>Alerte : </strong>{{ interventionrapideSante.alerte }}</p>
+                    </li>
+
+                    <li class="list-group-item">
+                        <p><strong>Acteur : </strong>{{ interventionrapideSante.acteur }}</p>
+                    </li>
+
+                    <li class="list-group-item">
+                        <p><strong>Type d'intervention : </strong>{{ interventionrapideSante.type_intervention_sante }}</p>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+
+        <!-- Soins de Santé Primaire -->
+        <div class="col-xs-12 col-md-6">
+            <div class="card">
+                <h3 class="text-center">Soins de santé primaire </h3>
+                <ul class="list-group-striped" style="margin-right: 30px; margin-bottom: 20px;">
+                    
+
+                    <li class="list-group-item">
+                        <p><strong>PDI: </strong>{{ interventionrapideSante.pdi }}</p>
+                    </li>
+                    <li class="list-group-item">
+                        <p><strong>Total PDI Consulté: </strong>{{ interventionrapideSante.total_pdi_consulte }}</p>
+                    </li>
+
+                    <li class="list-group-item">
+                        <p><strong>Total demandeurs d'asiles consultés: </strong>{{ interventionrapideSante.total_refugie_demandeurs_asile_consulte }}</p>
+                    </li>
+
+                    <li class="list-group-item">
+                        <p><strong>Total population hôtes consultées: </strong>{{ interventionrapideSante.total_population_hote_consulte }}</p>
+                    </li>
+                    
+                  
+                    
+                 
+                </ul>
+
+                <!-- Sensibilisation -->
+                
+        
+                <ul class="list-group-striped" style="margin-right: 30px; margin-bottom: 20px;">
+                    {% for casmaladie in casmaladie_list %}
+                        <li class="list-group-item">
+                            <p><strong>Cas : </strong>{{ casmaladie.statutcas }}</p>
+                            <p><strong>Total Cas : </strong>{{ casmaladie.total_cas }}</p>
+                            <p><strong>Total hommes : </strong>{{ casmaladie.total_hommes_cas }}</p>
+                            <p><strong>Total femmes: </strong>{{ casmaladie.total_femmes_cas }}</p>
+                            <p><strong>Total filles de - 5ans : </strong>{{ casmaladie.total_filles_moins_5 }}</p>
+                            <p><strong>Total garçons de - 5ans : </strong>{{ casmaladie.total_garcons_moins_5 }}</p>
+                        </li>
+                    {% empty %}
+                        <li class="list-group-item">Aucun cas de maladie disponible pour cette intervention.</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+
+        <div class="col-xs-12 col-md-6">
+            <div class="card">
+                <h3 class="text-center">Santé de la reproduction</h3>
+                <ul class="list-group-striped" style="margin-right: 30px; margin-bottom: 20px;">
+                    <li class="list-group-item">
+                        <p><strong># Consultation post natale: </strong>{{ interventionrapideSante.cpn }}</p>
+                    </li>
+                    <li class="list-group-item">
+                        <p><strong># consultations de planning familiale: </strong>{{ interventionrapideSante.pf }}</p>
+                    </li>
+                    <li class="list-group-item">
+                        <p><strong># d'enfants vaccinés PENTA3: </strong>{{ interventionrapideSante.nombre_enfant_vaccine_population_sante_repro_penta3 }}</p>
+                    </li>
+                    <li class="list-group-item">
+                        <p><strong># D'enfants vaccinés VAR 1,2: </strong>{{ interventionrapideSante.nombre_enfant_vaccine_population_sante_repro_var }}</p>
+                    </li>
+                    <li class="list-group-item">
+                        <p><strong># D'enfants vaccinés Polio 3: </strong>{{ interventionrapideSante.nombre_enfant_vaccine_population_sante_repro_polio }}</p>
+                    </li>
+                    <li class="list-group-item">
+                        <p><strong># D'enfants vaccinés - consultation prénatale: </strong>{{ interventionrapideSante.nombre_enfant_vaccine_population_sante_repro_cpon }}</p>
+                    </li>
+                    
+                </ul>
+            </div>
+        </div>
+
+        <!-- Santé Mentale et Soutien Psychosocial -->
+        <div class="col-xs-6 col-md-6">
+            <div class="card">
+                <h3 class="text-center">Santé mentale et soutien psychosocial</h3>
+               
+                <ul class="list-group-striped" style="margin-right: 30px; margin-bottom: 20px;">
+                    {% for cassantementale in cassantementale_list %}
+                    
+                        <li class="list-group-item">
+                            <p><strong>Cas : </strong>{{ cassantementale.caspsycho }}</p>
+                            <p><strong>Total Cas : </strong>{{ cassantementale.total_cas_psycho }}</p>
+                            <p><strong>Total hommes : </strong>{{ cassantementale.total_hommes }}</p>
+                            <p><strong>Total femmes: </strong>{{ cassantementale.total_femmes }}</p>
+                            <p><strong>Total filles de - 5ans : </strong>{{ cassantementale.total_filles }}</p>
+                            <p><strong>Total garçons de - 5ans : </strong>{{ cassantementale.total_garcons }}</p>
+                        </li>
+                    {% empty %}
+                        <li class="list-group-item">Aucun cas de santé mentale et soutien psychosocial disponible pour cette intervention.</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+      
+        <!-- Sensibilisation -->
+        <div class="col-xs-12 col-md-6">
+            <div class="card">
+                <h3 class="text-center">Sensibilisation</h3>
+                <ul class="list-group-striped" style="margin-right: 30px; margin-bottom: 20px;">
+                    <li class="list-group-item">
+                        <p><strong>Nombre de ménages touchés: </strong>{{ interventionrapideSante.nombre_menage_touche }}</p>
+                    </li>
+                    <li class="list-group-item">
+                        <p><strong># Pratiques familiales essentielles: </strong>{{ interventionrapideSante.nombre_total_pratiques_familiales_essentielles }}</p>
+                    </li>
+                    <li class="list-group-item">
+                        <p><strong>Hommes ayant adopté les pratiques familiales essentielles: </strong>{{ interventionrapideSante.nombre_homme_pratiques_familiales_essentielles }}</p>
+                    </li>
+                    <li class="list-group-item">
+                        <p><strong>Femmes ayant adopté les pratiques familiales essentielles: </strong>{{ interventionrapideSante.nombre_femme_pratiques_familiales_essentielles }}</p>
+                    </li>
+                    
+                </ul>
+            </div>
+        </div>
+
+        <!-- Nutrition -->
+        <div class="col-xs-12 col-md-6">
+            <div class="card">
+                <h3 class="text-center">Nutrition</h3>
+                <ul class="list-group-striped" style="margin-right: 30px; margin-bottom: 20px;">
+                    <li class="list-group-item">
+                        <p><strong>Dépistage pédiatrique MAS: </strong>{{ interventionrapideSante.depistage_pediatrique_action_sante }}</p>
+                    </li>
+                    <li class="list-group-item">
+                        <p><strong>Dépistage pédiatrique MAS: </strong>{{ interventionrapideSante.depistage_pediatrique_MAS_action_sante }}</p>
+                    </li>
+                    <li class="list-group-item">
+                        <p><strong>Dépistage pédiatrique MAM: </strong>{{ interventionrapideSante.depistage_pediatrique_MAM_action_sante }}</p>
+                    </li>
+                    <li class="list-group-item">
+                        <p><strong>MAM PEC CM: </strong>{{ interventionrapideSante.mam_pec_cm }}</p>
+                    </li>
+                    <li class="list-group-item">
+                        <p><strong>MAM PEC CM: </strong>{{ interventionrapideSante.mas_pec_cm }}</p>
+                    </li>
+                    <li class="list-group-item">
+                        <p><strong>Dépistage pédiatrique MAM avec complications: </strong>{{ interventionrapideSante.depistage_pediatrique_MAS_complication_action_sante }}</p>
+                    </li>
+                    <li class="list-group-item">
+                        <p><strong>Référés CRENI cliniques mobiles(CM): </strong>{{ interventionrapideSante.refere_creni_cm }}</p>
+                    </li>
+                    <li class="list-group-item">
+                        <p><strong>Total FEFA(femmes enceintes , femmes allaitantes) (Malnutrition Aiguë Sévère): </strong>{{ interventionrapideSante.total_fefa }}</p>
+                    </li>
+                    <li class="list-group-item">
+                        <p><strong>FEFA (Malnutrition Aiguë moderée)(MAM): </strong>{{ interventionrapideSante.fefa_mam }}</p>
+                    </li>
+                    <li class="list-group-item">
+                        <p><strong>FEFA (MAS): </strong>{{ interventionrapideSante.fefa_mas }}</p>
+                    </li>
+                    <li class="list-group-item">
+                        <p><strong>FEFA (MAM pris en charge(PEC)): </strong>{{ interventionrapideSante.fefa_mam_pec }}</p>
+                    </li>
+                    <li class="list-group-item">
+                        <p><strong>FEFA (MAS PEC): </strong>{{ interventionrapideSante.fefa_mas_pec }}</p>
+                    </li>
+                    <li class="list-group-item">
+                        <p><strong>Périmètre Brachial(MUAC/PB): </strong>{{ interventionrapideSante.muac }}</p>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        
+
+        
+
+
+    </div>
+</div>
+
+{% endblock content %}

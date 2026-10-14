@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+<div class="jumbotron jumbotron-fluid" >
+ <div style="margin-left:  5% ">
+    <h2> Détails de mouvement enregistrés par {{mouvement.acteur}} à {{mouvement.alerte.localite}}</h2>
+    <hr>
+    <h4><p>Région de :  {{mouvement.alerte.localite.commune.departement.region}} </p>
+       <p> Département:  {{mouvement.alerte.localite.commune.departement}} </p>
+       <p> Commune de:  {{mouvement.alerte.localite.commune}} </p>
+    </h4>
+ </div>
+    
+</div>
+
+<!-- Autoriser la modification uniquement lorsque l'élement n'est pas validé-->
+<a class="btn btn-secondary" style="margin-left: 5%" href=" {% url 'alerte_detail' mouvement.alerte.id  %}">Retour à l'alerte</a>
+{% if mouvement.validation == 1 and user.last_name|lower == mouvement.acteur|lower%}
+ <a class="btn btn-success" href="{% url 'mouvement-edit' mouvement.id %}">Modifier</a>
+ {% endif %}
+
+<div style="margin-left: 5%" class="card" style="width:  18rem;">
+  <ul class="list-group-striped  list-group-flush" > 
+    <li class="list-group-item">
+            <p><strong>Date d'enregistrement du mouvement</strong>: {{mouvement.alerte.date_reception}}</p>
+    </li>
+    <li class="list-group-item">
+            <p><strong>Statut de la confirmation: </strong> {{mouvement.confirmation_status}}</p>
+    </li>
+    <li class="list-group-item">
+        <p><strong>Statut des ménages: </strong> {{mouvement.statut_deplace}}</p>  
+        </li>
+    <li class="list-group-item">
+            <p><strong>Nombre de ménages affectés: </strong> {{mouvement.menage_affectes}}</p>  
+    </li>
+   <li class="list-group-item">
+        <p><strong>Localité d'origine:  </strong>{{ mouvement.localite_origine}}</p>
+   </li>
+   <li class="list-group-item">
+        <p><strong>Date de publication du rapport: </strong> {{mouvement.date_publication_rapport}}</p>
+   </li>  
+   <li class="list-group-item">
+        <p><strong>Localité d'origine: </strong> 
+        {% if mouvement.localite_origine %}
+            {{mouvement.localite_origine}}
+        {% endif %}
+             </p>
+     </li>
+  <li class="list-group-item">
+     {% if mouvement.statut_deplace == 3 %}
+     <p><strong>Pays d'origine: </strong> 
+           {{mouvement.pays_origine}}
+     {% endif %}
+          </p>
+  </li>  
+
+</ul>
+
+</div>
+
+<!-- Autoriser la modification uniquement lorsque l'élement n'est pas validé-->
+<a class="btn btn-secondary" style="margin-left: 5%" href=" {% url 'list_mouvement' %}">Retour à la liste des mouvements</a>
+{% if mouvement.validation == 1 and user.last_name|lower == mouvement.acteur|lower%}
+ <a class="btn btn-success" href="{% url 'mouvement-edit' mouvement.id %}">Modifier</a>
+ {% endif %}
+
+    
+{% endblock content %}
